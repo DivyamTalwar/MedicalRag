@@ -5,7 +5,6 @@ langgraph
 langchain-pinecone
 langchain-openai
 nest-asyncio
-pypdf
 llama-parse
 
 pinecone
@@ -17,3 +16,4 @@ pydantic
 httpx
 openai
 tiktoken
+lark
