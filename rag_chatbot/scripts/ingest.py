@@ -350,7 +350,7 @@ class MedicalSemanticChunker():
             matches = len(re.findall(pattern, text))
             phi_score += matches
         
-        return phi_score
+        return phi_score >= 1
     
     def _classify_table_type(self, text: str) -> str:
         text_lower = text.lower()
@@ -489,7 +489,7 @@ def merge_extraction_results(results: Dict[str, Any]) -> List[Any]:
         standard_nodes = results.get(standard_key, [])
         table_nodes = results.get(tables_key, [])
         
-        logging.info(f"📊 Processing {file_base}:")
+        logging.info(f"Processing {file_base}:")
         logging.info(f"  Standard nodes: {len(standard_nodes)}")
         logging.info(f"  Table nodes: {len(table_nodes)}")
         
@@ -549,7 +549,7 @@ def merge_extraction_results(results: Dict[str, Any]) -> List[Any]:
         logging.info(f"Merged {len(final_nodes)} nodes for {file_base}")
         merged_nodes.extend(final_nodes)
     
-    logging.info(f"🎯 Final merge result: {len(merged_nodes)} total nodes")
+    logging.info(f"Final merge result: {len(merged_nodes)} total nodes")
     return merged_nodes
 async def multi_pass_processing(pdf_files: List[str]) -> List[Any]:
     parser_standard = LlamaParse(
