@@ -7,16 +7,11 @@ from dotenv import load_dotenv
 from llama_index.core.base.llms.types import ChatMessage, ChatResponse, ChatResponseGen, CompletionResponse, CompletionResponseGen
 from llama_index.core.llms.llm import LLM
 
-# Load .env file from the project root
 dotenv_path = os.path.join(os.path.dirname(__file__), '..', '..', '.env')
 load_dotenv(dotenv_path=dotenv_path)
 
 
 class CustomLLM(LLM):
-    """
-    Custom LlamaIndex LLM class to interface with the Civie LLM endpoint.
-    Supports chat/completion in sync and async, plus streaming.
-    """
     model: str = "omega"
     max_tokens: int = 4096
     temperature: float = 0.7
@@ -144,7 +139,6 @@ class CustomLLM(LLM):
         return gen()
 
     def complete(self, prompt: str, **kwargs: Any) -> CompletionResponse:
-        # This method is for completion models, but we can adapt it to our chat model.
         messages = [ChatMessage(role="user", content=prompt)]
         chat_response = self.chat(messages, **kwargs)
         return CompletionResponse(text=chat_response.message.content)
@@ -152,7 +146,6 @@ class CustomLLM(LLM):
     def stream_complete(
         self, prompt: str, **kwargs: Any
     ) -> CompletionResponseGen:
-        # Adapt streaming chat to completion streaming
         messages = [ChatMessage(role="user", content=prompt)]
         chat_stream = self.stream_chat(messages, **kwargs)
 

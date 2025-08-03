@@ -1,0 +1,705 @@
+{
+  "parent_chunks": [
+    {
+      "chunk_index": 1,
+      "chunk_id": "6fb99f0a-d8e7-432e-a807-9ba874fb7ea5",
+      "metadata": {
+        "chunk_id": "3fed6f07-c9af-4a92-bfaa-05344b133687",
+        "chunk_type": "parent_standard",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "2",
+        "page_no": "1",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['CIVIE', 'civie', 'radiology']",
+        "section_title": "INTRODUCTION",
+        "text": "# INTRODUCTION ## About the CI Founded in April 2018 Established with the vision to revolutionize revenue cycle management through technology, we specialize in AI-driven solutions that streamline billing processes, enhance collections, and minimize operational burdens for healthcare providers. Cost-effective practice management We offer comprehensive practice management services that reduce operational costs and focus resources on patient care. Our strategies are tailored to each practice, ensuring optimal financial and operational efficiency. Commitment to industry innovation Continuously advancing healthcare administration with cutting-edge research and development to keep our partners ahead. Our innovations are designed to adapt to the evolving healthcare landscape, ensuring sustainability and competitiveness. ```mermaid graph TD A[United States Map] B[SOL RADIOLOGY] C[TRRA] D[Raleigh Radiology] A --> B A --> C A --> D style A fill:#cccccc,stroke:#000000,stroke-width:2px style B fill:#ffa500,stroke:#000000,stroke-width:2px style C fill:#ff69b4,stroke:#000000,stroke-width:2px style D fill:#800080,stroke:#000000,stroke-width:2px ``` © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. 3"
+      }
+    },
+    {
+      "chunk_index": 2,
+      "chunk_id": "851c0d37-1181-4608-8ce3-f0b2c2d7d256",
+      "metadata": {
+        "chunk_id": "60a8bf26-c662-4c2f-914f-bf8b18845fdf",
+        "chunk_type": "parent_standard",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['40 %', '9:41', 'CIVIE', 'CIVIE', '40']",
+        "numerical_data": "[{'value': '40 %', 'type': 'measurements'}, {'value': '40', 'type': 'percentages'}]",
+        "order_idx": "8",
+        "page_no": "1",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['40 %', 'CIVIE', '40', 'civie', '9:41']",
+        "section_title": "BENEFITS & INDUSTRY IMPACT",
+        "text": "# BENEFITS & INDUSTRY IMPACT ## Seamless communication and support tools for improved patient experience - Virtual Assistant: Provides patients with 24/7 automated support to answer common questions and assist with routine tasks. - IVR (Interactive Voice Response): Offers an interactive phone system for patients to manage appointments, billing inquiries, and more without human intervention. - Chat Bot: Engages patients through real-time messaging, assisting with scheduling, payments, and other services. - Bi-Directional Text Communication: Allows for two-way texting between patients and providers, making communication faster and more convenient for both parties. <div style=\"float: right; width: 40%;\"> 9:41 CareBot Our chatbot is here to assist you instantly Today 👋 Hello! I'm CareBot, Patient Folio's virtual assistant. Please select a topic: Request Statement Payment Update Insurance Why did I receive Bill? Other Patient Services Message... </div> © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 29"
+      }
+    },
+    {
+      "chunk_index": 3,
+      "chunk_id": "1a459e90-15ca-4959-b4de-87e5426ae866",
+      "metadata": {
+        "chunk_id": "5900bf38-6917-4055-b54d-0aeed2d9b78c",
+        "chunk_type": "parent_table",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['40 %', '30 %', '20 %', '0 %', '0 %', '2 %', '4 %', '30.3 %', '34.3 %', '35.2 %', '39.4 %', 'Dr. Satish Mathan', 'hospital', 'hospital', 'clinic', 'hospital', 'clinic', 'CIVIE', 'CIVIE', 'CIVIE', 'CIVIE', 'CIVIE', '40', '30', '20', '0', '0', '2', '4', '30.3', '34.3', '35.2', '39.4']",
+        "numerical_data": "[{'value': '40 %', 'type': 'measurements'}, {'value': '30 %', 'type': 'measurements'}, {'value': '20 %', 'type': 'measurements'}, {'value': '0 %', 'type': 'measurements'}, {'value': '0 %', 'type': 'measurements'}, {'value': '2 %', 'type': 'measurements'}, {'value': '4 %', 'type': 'measurements'}, {'value': '30.3 %', 'type': 'measurements'}, {'value': '34.3 %', 'type': 'measurements'}, {'value': '35.2 %', 'type': 'measurements'}, {'value': '39.4 %', 'type': 'measurements'}, {'value': '40', 'type': 'percentages'}, {'value': '30', 'type': 'percentages'}, {'value': '20', 'type': 'percentages'}, {'value': '0', 'type': 'percentages'}, {'value': '0', 'type': 'percentages'}, {'value': '2', 'type': 'percentages'}, {'value': '4', 'type': 'percentages'}, {'value': '30.3', 'type': 'percentages'}, {'value': '34.3', 'type': 'percentages'}, {'value': '35.2', 'type': 'percentages'}, {'value': '39.4', 'type': 'percentages'}]",
+        "order_idx": "4",
+        "page_no": "1",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['table', 'tabular_data', 'company_info']",
+        "references_table": "True",
+        "searchable_terms": "['40 %', '2 %', '4', 'CIVIE', '30 %', '39.4', '2', '40', '30', '4 %', '34.3', '35.2 %', '34.3 %', '30.3 %', '20', 'Dr. Satish Mathan', 'civie', 'clinic', '30.3', 'hospital', '39.4 %', '0 %', 'radiology', '0', '20 %', '35.2']",
+        "section_title": "19M br Orders br Processed 16M...",
+        "table_type": "performance_metrics",
+        "text": "| **19M**<br/>Orders<br/>Processed | **16M**<br/>Images<br/>Processed | **13M**<br/>Reports<br/>Coded | **13M**<br/>Reports<br/>Distributed | **11M**<br/>Patient<br/>Volume |  | ------------------------------------ | ----------------------------------------- | ------------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------- |  | **$400M**<br/>Payments<br/>Processed | **450+**<br/>Application<br/>Integrations | **6.5K**<br/>Referring<br/>Physicians | **60+**<br/>Applications<br/>Deployed | Our largest client does<br/>3M studies annually.<br/>Our smallest does<br/>6K studies annually. |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n| # 80Full-Time Developers<br/>(Avg. Exp - 5 yrs.) | # 12UI/UX Designers | # 8Product Owners | # 10Database Engineers |  | ------------------------------------------------ | ------------------- | ------------------------------- | ---------------------------------------------- |  | # 18AI Engineers | # 12Data Scientists | # 8Testers (Automation, Manual) | # 24/7In-House Stateside<br/>Helpdesk Services |  | ## 40%of our tech team has more than 15 years of experience in the radiology industry, and | ## 30%has more than 10 years. |\n| CI fills a critical niche in the Radiology practice paradigm. It allows independent radiology groups to maintain autonomy and independence while recognizing the benefits of scale, all without compromising group culture. CI and Member Radiology groups maintain long term and short-term financial alignment which is critical to recruitment and retention of the best and brightest Radiologists. Dr. Satish Mathan, Raleigh Radiology |  | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |  | Cambria Somerset Radiology teamed up with CI because with CI's technology, capital, and teamwork, we see a great synergy to help us maintain our group as a fiercely independent, successful radiology practice far into the future. Cambria Somerset Group |  | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |  | Despite our exponential growth from two hospitals to 64 hospitals/clinics over 25 years, being a premier radiology group now requires more than exceptional services, quality and relationships. CI is providing us the disruptive technology, workflow enhancements and improved revenue to provide exceptional patient care, provide additional value to our hospitals/clinic/referring physician partners, and at the same time, improve our daily work life. I'm excited to practice radiology again. Texas Radiology Associates |  | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. |  |  |  |  |  |\n| **Increased Costs**<br/>Tech advancements and rising operational costs have led to increased expenses, while low reimbursements due to value-based care models and complex payer policies are straining profitability. | **High Denial Rates**<br/>Denials due to coding errors, eligibility issues, and incomplete documentation are common, leading to delayed revenue and requiring additional resources for denial management and re-submission. | **Payer Contract Discrepancies**<br/>Payers often underpay or delay payments based on unclear contract terms, requiring constant monitoring to ensure accurate reimbursements and prevent financial leakage. |  | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |  | **Regulatory Complexities**<br/>Constant changes in healthcare regulations and compliance requirements, such as MIPS, ICD-10 updates, and value-based care models, add layers of complexity, increasing the risk of errors and penalties. | **Patient Financial Responsibility**<br/>With a 20% rise in patient financial responsibility from high-deductible plans, practices face greater challenges in patient collections, requiring improved communication and payment plan options. | **Lengthy Reimbursement Cycle**<br/>Slow reimbursement cycles, driven by manual processes, incomplete documentation, and payer delays, result in longer AR days and cash flow challenges for providers. | © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 8 |  |  |  |  |  |\n| MEDICARE CONVERSION ## Navigating the impact of declining medicare reimbursement rates on provider revenue - Medicare Reimbursement Decline: The steady reduction in the Medicare Physician Fee Schedule (MPFS) conversion rate highlights the shrinking reimbursements for services provided to Medicare patients. - Impact on Provider Revenue: Providers may need to optimize operational efficiencies and collections to mitigate the effects of decreasing Medicare payments. - Importance of Revenue Cycle Management (RCM): With continued declines in the Medicare conversion rate, effective RCM strategies, including optimized coding, claim scrubbing, and denial management, are critical to maximizing revenue despite reimbursement cuts. ### Medicare conversion rate change since 2019 | Year | Conversion Rate |  | ---- | --------------- |  | 2019 | $36.04 |  | 2020 | $36.09 |  | 2021 | $34.89 |  | 2022 |\n| Year | Practice Cost Inflation (MEI) | Physician Unadjusted Reimbursement |  | ---- | ----------------------------- | ---------------------------------- |  | 2001 | 0% | 0% |  | 2002 | \\~2% | \\~-4% |  | 2003 |\n| Year | Percentage |  | ---- | ---------- |  | 2012 | 30.3% |  | 2013 | 34.3% |  | 2014 | 35.2% |  | 2015 | 39.4% |\nOUR SOLUTION # Let's explore how CI is solving these challenges. © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 12"
+      }
+    },
+    {
+      "chunk_index": 4,
+      "chunk_id": "7803909e-4efd-458b-9691-f092e4fc7646",
+      "metadata": {
+        "chunk_id": "263be0af-38e7-48fd-8b43-f043006bbf40",
+        "chunk_type": "parent_standard",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "6",
+        "page_no": "1",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['CIVIE', 'civie']",
+        "section_title": "OUR SOLUTION",
+        "text": "# OUR SOLUTION ## Charge capture Integration with RIS and EHR systems for seamless data transfer - HL7 - Flat files - Fax - Charge ticket app to capture E&M charges - Robotic process automation (RPA) for screen scrape and more Charge capture audits - Automated capture of all billable services and procedures - Avoiding missed charges for ancillary services like contrast usage [The image contains a desktop computer screen showing a patient documentation interface and a mobile device screen displaying a medical ticketing system] © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. 15"
+      }
+    },
+    {
+      "chunk_index": 5,
+      "chunk_id": "8dd39b4b-0db6-4732-a357-7ecaea1b05a3",
+      "metadata": {
+        "chunk_id": "eddc0533-97df-40a3-b9ba-feaf1474be90",
+        "chunk_type": "parent_table",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['02/12/2023', '12/12/2023', '10:30am', '11:30am', 'clinic', 'CIVIE', 'CIVIE', 'CIVIE', 'hospital', 'CIVIE', 'CIVIE', 'CIVIE', 'CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "7",
+        "page_no": "1",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['table', 'tabular_data', 'company_info']",
+        "references_table": "True",
+        "searchable_terms": "['10:30am', '11:30am', 'CIVIE', 'hospital', '12/12/2023', 'diagnosis', 'civie', '02/12/2023', 'clinic', 'radiology']",
+        "section_title": "CODING Most important stage for prevention...",
+        "table_type": "performance_metrics",
+        "text": "| CODING ## Most important stage for prevention of denials and to maximize payments from payers | ### Coding - AI-assisted medical coding for speed and accuracy - Predictive, coding-assisted solutions with real-time error alerting to maximize throughput - Expertise in IR coding and specialized radiology-specific MIPS coding and reporting - LCD/NCD edits - Payer specific edits that are always learning/evolving driven by claim adjudications and policy change - Deficient reports returned to Coding Assistant Portal for doctor to review | \\[A screenshot of a medical coding interface with various fields and sections for entering codes and information] |  | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |\n|---|---|---|---|---|---|\n| CODING ASSISTANCE PORTAL ## Ensuring complete and accurate documentation - Streamlining Report Corrections: The Coding Assistance Portal allows radiologists to quickly address deficient reports by adding necessary information to meet insurance requirements for payment. - Real-Time Deficiency Alerts: Radiologists receive instant notifications when a report lacks sufficient details, enabling timely addendums to prevent claim denials. - Ensuring Compliance and Maximizing Reimbursement: By ensuring all clinical documentation is accurate and complete, the portal helps reduce coding errors and increases the likelihood of full reimbursement from insurers. - Easy Addendum Creation: The portal simplifies the process of creating report addendums, saving radiologists time and ensuring that reports meet payer guidelines. - Integrated Workflow: Seamlessly integrates with existing workflows, allowing radiologists to make necessary corrections without disruption to their daily practice. © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 17 |  |  |  |  |  |\n| CODING AUDIT ## Revolutionizing coding audits with AI - Solution automatically audits all coding records to ensure accuracy and consistency. - AI systems are programmed to stay updated with the latest coding standards and regulatory changes, ensuring compliance at all times. - AI tools provide support to manual auditors by pre-screening records and highlighting potential issues, which allows human auditors to focus on complex cases. ``` [An image of a software interface is displayed, showing a patient record with coding and audit information. The interface includes patient details, diagnosis codes, and audit results.] ``` © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. 18 |  |  |  |  |  |\n| 2019 | 2020 | 2021 | 2022 | 2023 | 2024 |\n| Medical Insurance | Created - John Doe on 02/12/2023 10:30am | Last Modified - John Doe on 12/12/2023 11:30am | Policy Number | Primary Subscriber | Relation |\n| Status | Claim ID | Patient Name | DOS | Payer | Billed Amount |\n| File ID | Received On | File Name | File Type | Status | Total Amou... |\n| Status | Patient Name | Location | Amount Billed | DOS | CPT/DX |\n| BANK RECONCILIATION CiT automates bank reconciliation (typically a manual process) using feature-based look up model for the following: - Match bank deposits (payer payments to patient charges) - Identify missing ERAs and/or lockbox files - Identify and resolve payment posting exceptions - Automates bank reconciliation, matching deposits (payer payments) to patient charges - Real-time posting of ERAs to capture payments, adjustments, and denials accurately - Strategic efforts to enroll all eligible payers to receive payments via EFT and convert remaining paper EOBs to electronic files | Bank Reconciliation<br/>Revenue | Bank Reconciliation<br/>Reconciled | Bank Reconciliation<br/>Unreconciled | Bank Reconciliation<br/>Total Items | Bank Reconciliation<br/>Reconciled Count |\n| CLIENT BILL MODULE ## Comprehensive client billing solutions for special arrangement - Custom Billing Options: Ability to handle special arrangements outside of standard insurance or patient billing, including billing directly to hospitals or research accounts. - Accurate Account Assignment: Ensure correct assignment of accounts to client billing to avoid errors in patient or insurance billing. - Separate Client Profiles: Maintain individualized profiles for each client bill, allowing for customized fee schedules and easy management of contact information. - Automated Invoice Notifications: Clients are notified when new invoices are available through a secure portal, allowing them to review, make payments, or send corrections. - Invoice Tracking and Reminders: Track open invoices and send automated reminders to contacts for timely payments. © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 25 |  |  |  |  |  |\n| REFUND MODULE ## Efficient credit balance management with the refund module - Direct Credit Card Refunds: Easily refund credit balances directly to the patient's credit card through the module. - Check Refund Initiation: Initiate refunds via check, with approval required before check creation to ensure accuracy. - Recoup and Tracking: Mark refunds for recoupment and add them to a follow-up queue for efficient tracking and resolution. - Error Identification: Mark transactions as posting errors for further review by the appropriate team, ensuring accurate financial records. - Queue Review for Approval: Review and approve check refunds efficiently through the dedicated queue, streamlining the process. [An image of a tablet or computer screen showing a user interface with a table containing multiple columns and rows, likely representing a refund management system] © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 26 |  |  |  |  |  |\n| 2022 UHC | 2023 UHC | 2024 UHC |  | -------- | -------- |\n| Customized Payment Plans | Flexible Payment Options | Deductible Holds |  | ------------------------ | ------------------------ |"
+      }
+    },
+    {
+      "chunk_index": 6,
+      "chunk_id": "e7e45d8d-f2e2-4a26-a924-e8f49e2fd4bf",
+      "metadata": {
+        "chunk_id": "db420461-321b-483b-aa93-1c5bbf145d72",
+        "chunk_type": "parent_standard",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE', 'CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "3",
+        "page_no": "1",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['CIVIE', 'civie']",
+        "section_title": "INTRODUCTION",
+        "text": "# INTRODUCTION ## Timeline ```mermaid timeline 2018 : CI Founded 2019 : Universal Worklist for Radiologists 2020 : RCM 2021 : PACS 2022 : RIS 2023 : Speech to Text ASR 2024 : Acquired by Windrose ``` © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 4"
+      }
+    },
+    {
+      "chunk_index": 7,
+      "chunk_id": "ea59387a-f6e2-4079-8b3d-37a9e560a9aa",
+      "metadata": {
+        "chunk_id": "100940c4-a071-4f42-9c3c-496f110c19ea",
+        "chunk_type": "parent_table",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE', 'CIVIE', 'CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "0",
+        "page_no": "1",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['table', 'tabular_data', 'company_info']",
+        "references_table": "True",
+        "searchable_terms": "['CIVIE', 'civie']",
+        "section_title": "CIVIE",
+        "table_type": "general_medical",
+        "text": "# CIVIE # RCM Solution ## CIVIE | Company Name ### MONTH 01, 2025 © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary."
+      }
+    },
+    {
+      "chunk_index": 8,
+      "chunk_id": "4e76c834-4cfc-4c3d-aa9c-00a4432d0d6e",
+      "metadata": {
+        "chunk_id": "e40751ba-e8af-4cbf-a46b-86da111672f0",
+        "chunk_type": "parent_table",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['75 %', '98 %', '22 %', '45 %', '28 %', '50 %', 'Dr. TedWen', 'Dr. Satish Mathan', 'CIVIE', 'CIVIE', 'CIVIE', 'CIVIE', 'CIVIE', 'CIVIE', 'CIVIE', 'CIVIE', '75', '98', '22', '45', '28', '50']",
+        "numerical_data": "[{'value': '75 %', 'type': 'measurements'}, {'value': '98 %', 'type': 'measurements'}, {'value': '22 %', 'type': 'measurements'}, {'value': '45 %', 'type': 'measurements'}, {'value': '28 %', 'type': 'measurements'}, {'value': '50 %', 'type': 'measurements'}, {'value': '75', 'type': 'percentages'}, {'value': '98', 'type': 'percentages'}, {'value': '22', 'type': 'percentages'}, {'value': '45', 'type': 'percentages'}, {'value': '28', 'type': 'percentages'}, {'value': '50', 'type': 'percentages'}]",
+        "order_idx": "11",
+        "page_no": "1",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['table', 'tabular_data', 'company_info']",
+        "references_table": "True",
+        "searchable_terms": "['45', '22', '50', '98 %', '98', '45 %', 'CIVIE', '75', 'Dr. TedWen', '28', '75 %', 'civie', 'radiology', '28 %', 'Dr. Satish Mathan', '50 %', '22 %']",
+        "section_title": "Contact Our Patient Service Team Select...",
+        "table_type": "performance_metrics",
+        "text": "| Contact Our Patient Service Team Select the topic of the inquiry Select the subject of the inquiry Send | 24/7 Availability The Process Of Your Radiology Report \\[Image of a mobile device with various icons around it] |  | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |  | Patient Online Services \\[Image of a mobile device with medical icons] Sign up to Our Site Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo. Get Your Personal Plan Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo. |  |  | \\[Image of a tablet device showing the following content] Medical Records Retrieval Frequently Asked Questions 7 out 10 Patient Portal Get started |  |\n|---|---|---|---|---|---|---|---|---|---|---|\n| PATIENT FEEDBACK We prioritize our patients, making their feedback essential for improving and refining our services through regular surveys | ![Patient Feedback Form](patient_feedback_form.png) Thank you for using PatientFolio! How was your experience? Let us know below. How would you rate your experience with PatientFolio? \\[5 empty star rating icons] Would you describe PatientFolio as user-friendly? \\[5 emoji faces ranging from very unhappy to very happy] Would you recommend PatientFolio to others? ○ Yes ○ No How can we make your experience using PatientFolio better? \\[Empty text area] Were there any issues that occurred? \\[Empty text area] \\[Send button] No Thanks |  | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 35 |  |  |  |  |  |  |\n| REFUND MODULE ## Patient surveys | ## 75%Patient portal<br/>adoption rate | ## 98%Positive patient<br/>feedback | ## 22%Reduction in<br/>billing inquiries |  | -------------------------------------- | ----------------------------------- | ---------------------------------------- |  | \"The portal is so easy to use! I'm not tech-savvy, but I had no issues finding my way around and getting things done quickly.\"Amy Coone | \"The payment process was super fast! It literally took me less than a minute to complete everything— such a relief!\"Ann Smith |\n| REFUND MODULE ## Data analytics & reporting - Real-time analytics for financial and operational performance - Customizable dashboards to track KPIs, payer performance, and claim status - Integrated Contract Variance/Incorrect Payments analysis to improve reimbursement rates and decrease future denials [A large image of a tablet or screen displaying multiple charts, graphs, and data visualizations, including bar charts, line graphs, heat maps, and tabular data.] © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 37 |  |  |  |  |  |  |  |  |  |  |\n| REFUND MODULE ## Data analytics & reporting | 77,535 | $16,545,750 | $2,576,749 |  | ------ | ----------- | ---------- |  | 2,815 | $17,727,589 |\n| REFUND MODULE ## Data analytics & reporting ```mermaid graph TD A[Computer Monitor] --> B[Data Analytics Dashboard] B --> C[Stacked Bar Chart] C --> D[X-axis: Time periods] C --> E[Y-axis: Numerical values] C --> F[Legend] F --> G[Competitive Value] F --> H[Current Refund] F --> I[Savings on Current] F --> J[Future Refund] F --> K[Savings on Future] F --> L[Expired Refund] F --> M[Savings on Expired] F --> N[Pending Refund] F --> O[Savings on Pending] F --> P[Rejected Refund] ``` © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 39 |  |  |  |  |  |  |  |  |  |  |\n| CASE STUDY: MODESTO ## Increase in payments per wRVU <div style=\"text-align: center;\"> ### Payment per wRVU Analysis </div> | Year | Payment per wRVU | Notes |  | ---- | ---------------- | --------------- |  | 2020 | $47.88 |\n| FINANCIAL IMPACT ## Clear ROI through reduced denials, faster reimbursements, and increased collections <div style=\"display: flex; justify-content: space-between;\"> <div style=\"width: 45%;\"> > \"CI's technology and workflow enhancements have been crucial in increasing our revenue by 28% and supporting our growing needs. Their solutions have allowed us to provide exceptional patient care, deliver more value to our partners, and improve our daily operations. Thanks to CI, I'm excited about practicing radiology again.\" > > Dr. TedWen </div> <div style=\"width: 50%;\"> ### Increase in Revenue | Year | Revenue |  | ---- | ------------------------ |  | 2019 |  |  | 2020 |\n> \"Their technology isn't just a tool — it's a game-changer for our practice.\" > > Dr. Satish Mathan © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 42"
+      }
+    },
+    {
+      "chunk_index": 9,
+      "chunk_id": "29420919-a168-4b52-8030-01b6287c580b",
+      "metadata": {
+        "chunk_id": "68ded3da-0687-4299-bb29-d9d0219f083e",
+        "chunk_type": "parent_table",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['48 hours', 'CIVIE', 'CIVIE', '48 hours']",
+        "numerical_data": "[{'value': '48 hours', 'type': 'measurements'}, {'value': '48 hours', 'type': 'tat_data'}]",
+        "order_idx": "9",
+        "page_no": "1",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['performance_metrics', 'table', 'tabular_data', 'company_info']",
+        "references_table": "True",
+        "searchable_terms": "['CIVIE', 'scan', 'ct', '48 hours', 'civie', 'x-ray']",
+        "section_title": "NorthStar logo PatientFolio Welcome Let s...",
+        "table_type": "performance_metrics",
+        "text": "| !\\[NorthStar logo] PatientFolio Welcome! Let's make your payment easy and stress-free. Account Number Enter your account number Where can I find Account Number? \\[Continue] If you need help, please contact us. We will respond via email within 48 hours. ○ Contact Us \\[Image of two people sitting on a bench] | !\\[NorthStar logo] Balance Due ⓘ $1100.60 ˄ 3 statements Total Charges: $1980.60 (Charges are combined your 3 statements) Insurance Payment: -$700.00 Adjustment: $0.00 Total Balance: $1280.60 Prev Payment: -$180.00 Remaining Balance: $1100.60 Payment Due Date: Oct 15, 2024 Enter Card Details Name on Card John Doe Card Number 3092 - 9122 - 1212 - 9000 \\[VISA logo] Exp. Date CVV 09/29 892 ◯ Save this card for future payments \\[Pay 1100.60] | !\\[NorthStar logo] Home ☰ Balance Due ⓘ $1280.60 Payment Due Date: Oct 15, 2024 \\[Make Payment] Recent Statements See All CT Scan, X-Ray, ... $458.90 > May 15, 2024 CT Scan Head/Brain $458.90 > Dec 20, 2023 CT Scan Head/Brain Paid > Jun 5, 2023 Recent Payments See All July 30, 2024 -$200.00 > ○ Payment Processing Jun 30, 2024 -$100.00 > Confirmation #128390 ↓ Receipt Insurance added to your account Medical United Health Care |  | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |\n|---|---|---|---|---|---|---|\n| PatientFolio Balance Due (i) $1280.60 2 Statements Payment Due Date May 27, 2024 Enter Card Details Name on Card Enter Name on Card Card Number Scan or Enter Card Number VISA MASTERCARD Exp. Date \\ | CVV MM/YY \\ | Security Code \\[Toggle] Save this card for future payments \\[Pay 1280.60] patientfolio.com | Statement ≡ ← Statement Balance (3) (i) $1280.00 Select the plan that is best for you If this plan doesn't work, please Pay in full ○ 3 monthly payments of $296.67 Pay your balance more quickly ● 6 monthly payments of $148.48 Most chosen plan by users ○ 12 monthly payments of $74.24 Start with as low as possible \\[Continue] patientfolio.com | Negotiation ≡ Negotiation \\[Icon] Enter Amount Three chances to negotiate for a discount on bill Add Payment Method If offer is accepted, you enter payment method Pay Discounted Bill Pay reduced bill amount immediately. FAQs \\[Start Negotiation] patientfolio.com | Negotiation ≡ Enter Amount Your Total Balance is $1280.60 Last chance to negotiate $980.00 Please enter an amount greater than $900.00 Previous offers: $780.00 $900.00 \\[Check Offer] \\[Numeric Keypad] 1 2 3 4 5 6 7 8 9 . 0 ← |  |\n| ### Quick Pay Patients can make secure payments instantly. ### Flexible Payment Plans Easily set up and manage personalized payment plans. ### Balance Negotiation Conveniently negotiate outstanding balances online. | \\[Four smartphone screens showing different aspects of the patient payment system] Screen 1: Shows a payment interface with a balance due of $1280.60 and options to enter card details. Screen 2: Displays payment plan options, including: - 3 monthly payments of $298.67 - 6 monthly payments of $148.48 - 12 monthly payments of $74.24 Screen 3: A negotiation screen with an option to enter an amount and \"Start Negotiation\". Screen 4: An amount entry screen for negotiation, showing \"Your Total Balance is $1280.60\" and \"Last chance to negotiate $980.00\". |  | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 32 |  |"
+      }
+    },
+    {
+      "chunk_index": 10,
+      "chunk_id": "2ac96e58-7663-42e2-ade5-4a4d16dbab87",
+      "metadata": {
+        "chunk_id": "f0634bf6-23e7-4241-a441-290f92716b8c",
+        "chunk_type": "parent_standard",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "10",
+        "page_no": "1",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['CIVIE', 'civie']",
+        "section_title": "BENEFITS & INDUSTRY IMPACT",
+        "text": "# BENEFITS & INDUSTRY IMPACT ## Customer services - Dedicated support team with industry-specific expertise, available to assist patients promptly - 24/7 self-service through the patient portal, offering continuous access to billing, appointments, and payments [Two mobile phone screens showing a \"Call Center\" interface with payment options and a laptop screen displaying a \"Call Center\" dashboard with various service topics and a payment plan pop-up] © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. 33"
+      }
+    },
+    {
+      "chunk_index": 11,
+      "chunk_id": "77b02b10-6048-4cb4-9be2-6ad329e9742e",
+      "metadata": {
+        "chunk_id": "dc0d60de-e30f-4829-b72c-c7245695a855",
+        "chunk_type": "parent_standard",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE', 'CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "12",
+        "page_no": "1",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['CIVIE', 'civie']",
+        "section_title": "CIVIE",
+        "text": "# CIVIE ## Thank You We would be glad to answer any questions. © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary."
+      }
+    },
+    {
+      "chunk_index": 12,
+      "chunk_id": "d3a104ec-b889-4298-ad78-ffa82d3d4fa5",
+      "metadata": {
+        "chunk_id": "126add23-1401-4e6b-8e92-f68de1017bbe",
+        "chunk_type": "parent_table",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "[]",
+        "numerical_data": "[]",
+        "order_idx": "1",
+        "page_no": "1",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['table', 'tabular_data']",
+        "references_table": "True",
+        "searchable_terms": "[]",
+        "section_title": "Introduction ----------------------------------------- The RCM challenges Our...",
+        "table_type": "financial_data",
+        "text": "| Introduction |  | ----------------------------------------- |  | The RCM challenges |  | Our comprehensive RCM solutions |  | Demonstrated benefits and industry impact |\n|---|---|---|---|---|---|---|---|---|\n| **Dhruv Chopra, MBA**<br/>Chief Executive Officer | **Preeth Hegde, MBA**<br/>Chief Financial Officer | **Bridget Haynes, MBA**<br/>Chief Revenue Officer |  |  | ------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------- | --------------------------------------------- |"
+      }
+    },
+    {
+      "chunk_index": 13,
+      "chunk_id": "3665b761-8d15-4a52-a8f2-25130790d44b",
+      "metadata": {
+        "chunk_id": "5239fe10-91bb-4c5b-9e11-e87694c840ae",
+        "chunk_type": "parent_table",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['28 %', '98.7 %', '97 %', '98 %', '45 days', 'CIVIE', 'CIVIE', '28', '98.7', '97', '98']",
+        "numerical_data": "[{'value': '28 %', 'type': 'measurements'}, {'value': '98.7 %', 'type': 'measurements'}, {'value': '97 %', 'type': 'measurements'}, {'value': '98 %', 'type': 'measurements'}, {'value': '45 days', 'type': 'measurements'}, {'value': '28', 'type': 'percentages'}, {'value': '98.7', 'type': 'percentages'}, {'value': '97', 'type': 'percentages'}, {'value': '98', 'type': 'percentages'}]",
+        "order_idx": "5",
+        "page_no": "1",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['table', 'tabular_data', 'company_info']",
+        "references_table": "True",
+        "searchable_terms": "['98 %', '98', 'CIVIE', '98.7', '28', '97', '98.7 %', '97 %', '45 days', '28 %', 'civie', 'radiology']",
+        "section_title": "AI-Powered Transformation UP Leveraging cutting-edge AI...",
+        "table_type": "performance_metrics",
+        "text": "| ### AI-Powered Transformation UP Leveraging cutting-edge AI technology, we have automated critical revenue cycle processes such as coding, claims scrubbing, and denial management. This has increased our clients' collections by up to 28% and significantly reduced errors. | ### Industry Expertise at the Core Our team consists of experienced professionals from the healthcare and radiology industries, bringing deep domain knowledge to every aspect of our solutions. Their expertise ensures that our systems are tailored to meet the specific needs of providers, improving operational efficiency and aligning with regulatory requirements. | ### Client-Centric Innovation We listen closely to our clients' evolving needs and continuously invest in research and development to deliver innovative solutions. Whether through workflow enhancements or tailored solutions, we ensure that our clients not only adapt but thrive in a rapidly changing healthcare landscape. |  | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |  | 98.7% | 97% | 98% |  | ------------------------------- | ------------------------------- | -------------------------- |  | Claims paid on first submission | claims submitted electronically | claims paid within 45 days |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n| **1**<br/>**Charge Capture**<br/>Automatically captures all billable services, ensuring no revenue is lost due to missed charges. | **2**<br/>**Coding**<br/>AI-assisted coding ensures accuracy and compliance with the latest regulations, speeding up claim submission. | **3**<br/>**Claim Scrubbing**<br/>AI-driven claim scrubbing identifies errors before submission, improving first-pass acceptance rates. | **4**<br/>**Payment Posting**<br/>Automates posting of payments, adjustments, and denials, ensuring real-time updates for accurate financials. |  | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |  | **5**<br/>**Analytics & Reporting**<br/>Real-time, customizable dashboards provide insights into key financial metrics for better decision-making. | **6**<br/>**Denial Resolution**<br/>AI-powered tools streamline denial management, reducing turnaround time and improving recovery rates. | **7**<br/>**Patient Collection**<br/>Multi-channel solutions for efficient patient payment collection, including reminders, portals, and flexible plans. | **8**<br/>**Reconciliation**<br/>Automated reconciliation matches payments with charges, identifying discrepancies and improving accuracy. | © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 14 |  |  |  |  |"
+      }
+    }
+  ],
+  "child_chunks": [
+    {
+      "chunk_index": 1,
+      "chunk_id": "59fd2f80-56ca-4871-a002-c548f9953649",
+      "metadata": {
+        "chunk_id": "70650acb-c232-491f-ac70-93c7e5aea65b",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['28 %', '98.7 %', '97 %', '98 %', '45 days', 'CIVIE', 'CIVIE', '28', '98.7', '97', '98']",
+        "numerical_data": "[{'value': '28 %', 'type': 'measurements'}, {'value': '98.7 %', 'type': 'measurements'}, {'value': '97 %', 'type': 'measurements'}, {'value': '98 %', 'type': 'measurements'}, {'value': '45 days', 'type': 'measurements'}, {'value': '28', 'type': 'percentages'}, {'value': '98.7', 'type': 'percentages'}, {'value': '97', 'type': 'percentages'}, {'value': '98', 'type': 'percentages'}]",
+        "order_idx": "1",
+        "page_no": "1",
+        "parent_id": "5239fe10-91bb-4c5b-9e11-e87694c840ae",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['table', 'tabular_data', 'company_info']",
+        "references_table": "True",
+        "searchable_terms": "['98 %', '98', 'CIVIE', '98.7', '28', '97', '98.7 %', '97 %', '45 days', '28 %', 'civie', 'radiology']",
+        "section_title": "AI-Powered Transformation UP Leveraging cutting-edge AI...",
+        "table_type": "performance_metrics",
+        "text": "| ### AI-Powered Transformation UP Leveraging cutting-edge AI technology, we have automated critical revenue cycle processes such as coding, claims scrubbing, and denial management. This has increased our clients' collections by up to 28% and significantly reduced errors. | ### Industry Expertise at the Core Our team consists of experienced professionals from the healthcare and radiology industries, bringing deep domain knowledge to every aspect of our solutions. Their expertise ensures that our systems are tailored to meet the specific needs of providers, improving operational efficiency and aligning with regulatory requirements. | ### Client-Centric Innovation We listen closely to our clients' evolving needs and continuously invest in research and development to deliver innovative solutions. Whether through workflow enhancements or tailored solutions, we ensure that our clients not only adapt but thrive in a rapidly changing healthcare landscape. |  | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |  | 98.7% | 97% | 98% |  | ------------------------------- | ------------------------------- | -------------------------- |  | Claims paid on first submission | claims submitted electronically | claims paid within 45 days |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n| **1**<br/>**Charge Capture**<br/>Automatically captures all billable services, ensuring no revenue is lost due to missed charges. | **2**<br/>**Coding**<br/>AI-assisted coding ensures accuracy and compliance with the latest regulations, speeding up claim submission. | **3**<br/>**Claim Scrubbing**<br/>AI-driven claim scrubbing identifies errors before submission, improving first-pass acceptance rates. | **4**<br/>**Payment Posting**<br/>Automates posting of payments, adjustments, and denials, ensuring real-time updates for accurate financials. |  | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |  | **5**<br/>**Analytics & Reporting**<br/>Real-time, customizable dashboards provide insights into key financial metrics for better decision-making. | **6**<br/>**Denial Resolution**<br/>AI-powered tools streamline denial management, reducing turnaround time and improving recovery rates. | **7**<br/>**Patient Collection**<br/>Multi-channel solutions for efficient patient payment collection, including reminders, portals, and flexible plans. | **8**<br/>**Reconciliation**<br/>Automated reconciliation matches payments with charges, identifying discrepancies and improving accuracy. | © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 14 |  |  |  |  |"
+      }
+    },
+    {
+      "chunk_index": 2,
+      "chunk_id": "9d1a0e46-f395-48cf-8705-d6a831ee10d2",
+      "metadata": {
+        "chunk_id": "722b87e4-78f7-4348-af34-c64e804dc101",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['40 %', '9:41', 'CIVIE', 'CIVIE', '40']",
+        "numerical_data": "[{'value': '40 %', 'type': 'measurements'}, {'value': '40', 'type': 'percentages'}]",
+        "order_idx": "2",
+        "page_no": "1",
+        "parent_id": "60a8bf26-c662-4c2f-914f-bf8b18845fdf",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['40 %', 'CIVIE', '40', 'civie', '9:41']",
+        "section_title": "BENEFITS & INDUSTRY IMPACT",
+        "text": "iries, and more without human intervention. - Chat Bot: Engages patients through real-time messaging, assisting with scheduling, payments, and other services. - Bi-Directional Text Communication: Allows for two-way texting between patients and providers, making communication faster and more convenient for both parties. <div style=\"float: right; wid"
+      }
+    },
+    {
+      "chunk_index": 3,
+      "chunk_id": "0cdfd99c-d5d3-46dd-abf1-4298b90664f6",
+      "metadata": {
+        "chunk_id": "97705fa5-432f-43fe-b2be-7fcdae4e9570",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['40 %', '9:41', 'CIVIE', 'CIVIE', '40']",
+        "numerical_data": "[{'value': '40 %', 'type': 'measurements'}, {'value': '40', 'type': 'percentages'}]",
+        "order_idx": "1",
+        "page_no": "1",
+        "parent_id": "60a8bf26-c662-4c2f-914f-bf8b18845fdf",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['40 %', 'CIVIE', '40', 'civie', '9:41']",
+        "section_title": "BENEFITS & INDUSTRY IMPACT",
+        "text": "# BENEFITS & INDUSTRY IMPACT ## Seamless communication and support tools for improved patient experience - Virtual Assistant: Provides patients with 24/7 automated support to answer common questions and assist with routine tasks. - IVR (Interactive Voice Response): Offers an interactive phone system for patients to manage appointments, billing inqu"
+      }
+    },
+    {
+      "chunk_index": 4,
+      "chunk_id": "667a9d01-321b-4de7-9780-db75555a3674",
+      "metadata": {
+        "chunk_id": "498844f0-e501-46dc-9832-275a6cf88e72",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['40 %', '30 %', '20 %', '0 %', '0 %', '2 %', '4 %', '30.3 %', '34.3 %', '35.2 %', '39.4 %', 'Dr. Satish Mathan', 'hospital', 'hospital', 'clinic', 'hospital', 'clinic', 'CIVIE', 'CIVIE', 'CIVIE', 'CIVIE', 'CIVIE', '40', '30', '20', '0', '0', '2', '4', '30.3', '34.3', '35.2', '39.4']",
+        "numerical_data": "[{'value': '40 %', 'type': 'measurements'}, {'value': '30 %', 'type': 'measurements'}, {'value': '20 %', 'type': 'measurements'}, {'value': '0 %', 'type': 'measurements'}, {'value': '0 %', 'type': 'measurements'}, {'value': '2 %', 'type': 'measurements'}, {'value': '4 %', 'type': 'measurements'}, {'value': '30.3 %', 'type': 'measurements'}, {'value': '34.3 %', 'type': 'measurements'}, {'value': '35.2 %', 'type': 'measurements'}, {'value': '39.4 %', 'type': 'measurements'}, {'value': '40', 'type': 'percentages'}, {'value': '30', 'type': 'percentages'}, {'value': '20', 'type': 'percentages'}, {'value': '0', 'type': 'percentages'}, {'value': '0', 'type': 'percentages'}, {'value': '2', 'type': 'percentages'}, {'value': '4', 'type': 'percentages'}, {'value': '30.3', 'type': 'percentages'}, {'value': '34.3', 'type': 'percentages'}, {'value': '35.2', 'type': 'percentages'}, {'value': '39.4', 'type': 'percentages'}]",
+        "order_idx": "1",
+        "page_no": "1",
+        "parent_id": "5900bf38-6917-4055-b54d-0aeed2d9b78c",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['table', 'tabular_data', 'company_info']",
+        "references_table": "True",
+        "searchable_terms": "['40 %', '2 %', '4', 'CIVIE', '30 %', '39.4', '2', '40', '30', '4 %', '34.3', '35.2 %', '34.3 %', '30.3 %', '20', 'Dr. Satish Mathan', 'civie', 'clinic', '30.3', 'hospital', '39.4 %', '0 %', 'radiology', '0', '20 %', '35.2']",
+        "section_title": "19M br Orders br Processed 16M...",
+        "table_type": "performance_metrics",
+        "text": "| **19M**<br/>Orders<br/>Processed | **16M**<br/>Images<br/>Processed | **13M**<br/>Reports<br/>Coded | **13M**<br/>Reports<br/>Distributed | **11M**<br/>Patient<br/>Volume |  | ------------------------------------ | ----------------------------------------- | ------------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------- |  | **$400M**<br/>Payments<br/>Processed | **450+**<br/>Application<br/>Integrations | **6.5K**<br/>Referring<br/>Physicians | **60+**<br/>Applications<br/>Deployed | Our largest client does<br/>3M studies annually.<br/>Our smallest does<br/>6K studies annually. |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n| # 80Full-Time Developers<br/>(Avg. Exp - 5 yrs.) | # 12UI/UX Designers | # 8Product Owners | # 10Database Engineers |  | ------------------------------------------------ | ------------------- | ------------------------------- | ---------------------------------------------- |  | # 18AI Engineers | # 12Data Scientists | # 8Testers (Automation, Manual) | # 24/7In-House Stateside<br/>Helpdesk Services |  | ## 40%of our tech team has more than 15 years of experience in the radiology industry, and | ## 30%has more than 10 years. |\n| CI fills a critical niche in the Radiology practice paradigm. It allows independent radiology groups to maintain autonomy and independence while recognizing the benefits of scale, all without compromising group culture. CI and Member Radiology groups maintain long term and short-term financial alignment which is critical to recruitment and retention of the best and brightest Radiologists. Dr. Satish Mathan, Raleigh Radiology |  | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |  | Cambria Somerset Radiology teamed up with CI because with CI's technology, capital, and teamwork, we see a great synergy to help us maintain our group as a fiercely independent, successful radiology practice far into the future. Cambria Somerset Group |  | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |  | Despite our exponential growth from two hospitals to 64 hospitals/clinics over 25 years, being a premier radiology group now requires more than exceptional services, quality and relationships. CI is providing us the disruptive technology, workflow enhancements and improved revenue to provide exceptional patient care, provide additional value to our hospitals/clinic/referring physician partners, and at the same time, improve our daily work life. I'm excited to practice radiology again. Texas Radiology Associates |  | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. |  |  |  |  |  |\n| **Increased Costs**<br/>Tech advancements and rising operational costs have led to increased expenses, while low reimbursements due to value-based care models and complex payer policies are straining profitability. | **High Denial Rates**<br/>Denials due to coding errors, eligibility issues, and incomplete documentation are common, leading to delayed revenue and requiring additional resources for denial management and re-submission. | **Payer Contract Discrepancies**<br/>Payers often underpay or delay payments based on unclear contract terms, requiring constant monitoring to ensure accurate reimbursements and prevent financial leakage. |  | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |  | **Regulatory Complexities**<br/>Constant changes in healthcare regulations and compliance requirements, such as MIPS, ICD-10 updates, and value-based care models, add layers of complexity, increasing the risk of errors and penalties. | **Patient Financial Responsibility**<br/>With a 20% rise in patient financial responsibility from high-deductible plans, practices face greater challenges in patient collections, requiring improved communication and payment plan options. | **Lengthy Reimbursement Cycle**<br/>Slow reimbursement cycles, driven by manual processes, incomplete documentation, and payer delays, result in longer AR days and cash flow challenges for providers. | © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 8 |  |  |  |  |  |\n| MEDICARE CONVERSION ## Navigating the impact of declining medicare reimbursement rates on provider revenue - Medicare Reimbursement Decline: The steady reduction in the Medicare Physician Fee Schedule (MPFS) conversion rate highlights the shrinking reimbursements for services provided to Medicare patients. - Impact on Provider Revenue: Providers may need to optimize operational efficiencies and collections to mitigate the effects of decreasing Medicare payments. - Importance of Revenue Cycle Management (RCM): With continued declines in the Medicare conversion rate, effective RCM strategies, including optimized coding, claim scrubbing, and denial management, are critical to maximizing revenue despite reimbursement cuts. ### Medicare conversion rate change since 2019 | Year | Conversion Rate |  | ---- | --------------- |  | 2019 | $36.04 |  | 2020 | $36.09 |  | 2021 | $34.89 |  | 2022 |\n| Year | Practice Cost Inflation (MEI) | Physician Unadjusted Reimbursement |  | ---- | ----------------------------- | ---------------------------------- |  | 2001 | 0% | 0% |  | 2002 | \\~2% | \\~-4% |  | 2003 |\n| Year | Percentage |  | ---- | ---------- |  | 2012 | 30.3% |  | 2013 | 34.3% |  | 2014 | 35.2% |  | 2015 | 39.4% |\nOUR SOLUTION # Let's explore how CI is solving these challenges. © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 12"
+      }
+    },
+    {
+      "chunk_index": 5,
+      "chunk_id": "a5678cfa-957b-472f-973b-1211e61c4998",
+      "metadata": {
+        "chunk_id": "c4dce710-4c45-43a3-bca7-8ace715fed3d",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "1",
+        "page_no": "1",
+        "parent_id": "3fed6f07-c9af-4a92-bfaa-05344b133687",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['CIVIE', 'civie', 'radiology']",
+        "section_title": "INTRODUCTION",
+        "text": "# INTRODUCTION ## About the CI Founded in April 2018 Established with the vision to revolutionize revenue cycle management through technology, we specialize in AI-driven solutions that streamline billing processes, enhance collections, and minimize operational burdens for healthcare providers. Cost-effective practice management We offer comprehensi"
+      }
+    },
+    {
+      "chunk_index": 6,
+      "chunk_id": "4c53417c-e37c-4255-be70-397197b4b801",
+      "metadata": {
+        "chunk_id": "216445ed-e7e5-4c8d-a5bf-d86a372644fd",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "2",
+        "page_no": "1",
+        "parent_id": "3fed6f07-c9af-4a92-bfaa-05344b133687",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['CIVIE', 'civie', 'radiology']",
+        "section_title": "INTRODUCTION",
+        "text": "ve practice management services that reduce operational costs and focus resources on patient care. Our strategies are tailored to each practice, ensuring optimal financial and operational efficiency. Commitment to industry innovation Continuously advancing healthcare administration with cutting-edge research and development to keep our partners ahe"
+      }
+    },
+    {
+      "chunk_index": 7,
+      "chunk_id": "0c610f4c-75ec-4549-bb50-4dd9c3eeaf64",
+      "metadata": {
+        "chunk_id": "7a3ae57f-e3f1-496f-8452-f5269e107518",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['02/12/2023', '12/12/2023', '10:30am', '11:30am', 'clinic', 'CIVIE', 'CIVIE', 'CIVIE', 'hospital', 'CIVIE', 'CIVIE', 'CIVIE', 'CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "1",
+        "page_no": "1",
+        "parent_id": "eddc0533-97df-40a3-b9ba-feaf1474be90",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['table', 'tabular_data', 'company_info']",
+        "references_table": "True",
+        "searchable_terms": "['10:30am', '11:30am', 'CIVIE', 'hospital', '12/12/2023', 'diagnosis', 'civie', '02/12/2023', 'clinic', 'radiology']",
+        "section_title": "CODING Most important stage for prevention...",
+        "table_type": "performance_metrics",
+        "text": "| CODING ## Most important stage for prevention of denials and to maximize payments from payers | ### Coding - AI-assisted medical coding for speed and accuracy - Predictive, coding-assisted solutions with real-time error alerting to maximize throughput - Expertise in IR coding and specialized radiology-specific MIPS coding and reporting - LCD/NCD edits - Payer specific edits that are always learning/evolving driven by claim adjudications and policy change - Deficient reports returned to Coding Assistant Portal for doctor to review | \\[A screenshot of a medical coding interface with various fields and sections for entering codes and information] |  | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |\n|---|---|---|---|---|---|\n| CODING ASSISTANCE PORTAL ## Ensuring complete and accurate documentation - Streamlining Report Corrections: The Coding Assistance Portal allows radiologists to quickly address deficient reports by adding necessary information to meet insurance requirements for payment. - Real-Time Deficiency Alerts: Radiologists receive instant notifications when a report lacks sufficient details, enabling timely addendums to prevent claim denials. - Ensuring Compliance and Maximizing Reimbursement: By ensuring all clinical documentation is accurate and complete, the portal helps reduce coding errors and increases the likelihood of full reimbursement from insurers. - Easy Addendum Creation: The portal simplifies the process of creating report addendums, saving radiologists time and ensuring that reports meet payer guidelines. - Integrated Workflow: Seamlessly integrates with existing workflows, allowing radiologists to make necessary corrections without disruption to their daily practice. © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 17 |  |  |  |  |  |\n| CODING AUDIT ## Revolutionizing coding audits with AI - Solution automatically audits all coding records to ensure accuracy and consistency. - AI systems are programmed to stay updated with the latest coding standards and regulatory changes, ensuring compliance at all times. - AI tools provide support to manual auditors by pre-screening records and highlighting potential issues, which allows human auditors to focus on complex cases. ``` [An image of a software interface is displayed, showing a patient record with coding and audit information. The interface includes patient details, diagnosis codes, and audit results.] ``` © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. 18 |  |  |  |  |  |\n| 2019 | 2020 | 2021 | 2022 | 2023 | 2024 |\n| Medical Insurance | Created - John Doe on 02/12/2023 10:30am | Last Modified - John Doe on 12/12/2023 11:30am | Policy Number | Primary Subscriber | Relation |\n| Status | Claim ID | Patient Name | DOS | Payer | Billed Amount |\n| File ID | Received On | File Name | File Type | Status | Total Amou... |\n| Status | Patient Name | Location | Amount Billed | DOS | CPT/DX |\n| BANK RECONCILIATION CiT automates bank reconciliation (typically a manual process) using feature-based look up model for the following: - Match bank deposits (payer payments to patient charges) - Identify missing ERAs and/or lockbox files - Identify and resolve payment posting exceptions - Automates bank reconciliation, matching deposits (payer payments) to patient charges - Real-time posting of ERAs to capture payments, adjustments, and denials accurately - Strategic efforts to enroll all eligible payers to receive payments via EFT and convert remaining paper EOBs to electronic files | Bank Reconciliation<br/>Revenue | Bank Reconciliation<br/>Reconciled | Bank Reconciliation<br/>Unreconciled | Bank Reconciliation<br/>Total Items | Bank Reconciliation<br/>Reconciled Count |\n| CLIENT BILL MODULE ## Comprehensive client billing solutions for special arrangement - Custom Billing Options: Ability to handle special arrangements outside of standard insurance or patient billing, including billing directly to hospitals or research accounts. - Accurate Account Assignment: Ensure correct assignment of accounts to client billing to avoid errors in patient or insurance billing. - Separate Client Profiles: Maintain individualized profiles for each client bill, allowing for customized fee schedules and easy management of contact information. - Automated Invoice Notifications: Clients are notified when new invoices are available through a secure portal, allowing them to review, make payments, or send corrections. - Invoice Tracking and Reminders: Track open invoices and send automated reminders to contacts for timely payments. © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 25 |  |  |  |  |  |\n| REFUND MODULE ## Efficient credit balance management with the refund module - Direct Credit Card Refunds: Easily refund credit balances directly to the patient's credit card through the module. - Check Refund Initiation: Initiate refunds via check, with approval required before check creation to ensure accuracy. - Recoup and Tracking: Mark refunds for recoupment and add them to a follow-up queue for efficient tracking and resolution. - Error Identification: Mark transactions as posting errors for further review by the appropriate team, ensuring accurate financial records. - Queue Review for Approval: Review and approve check refunds efficiently through the dedicated queue, streamlining the process. [An image of a tablet or computer screen showing a user interface with a table containing multiple columns and rows, likely representing a refund management system] © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 26 |  |  |  |  |  |\n| 2022 UHC | 2023 UHC | 2024 UHC |  | -------- | -------- |\n| Customized Payment Plans | Flexible Payment Options | Deductible Holds |  | ------------------------ | ------------------------ |"
+      }
+    },
+    {
+      "chunk_index": 8,
+      "chunk_id": "1b6ff7a2-fb17-4bba-8d83-87cba5d795c2",
+      "metadata": {
+        "chunk_id": "69c436d7-1f32-408a-a6d4-0e8753447880",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE', 'CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "1",
+        "page_no": "1",
+        "parent_id": "db420461-321b-483b-aa93-1c5bbf145d72",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['CIVIE', 'civie']",
+        "section_title": "INTRODUCTION",
+        "text": "# INTRODUCTION ## Timeline ```mermaid timeline 2018 : CI Founded 2019 : Universal Worklist for Radiologists 2020 : RCM 2021 : PACS 2022 : RIS 2023 : Speech to Text ASR 2024 : Acquired by Windrose ``` © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 4"
+      }
+    },
+    {
+      "chunk_index": 9,
+      "chunk_id": "46d01d2a-1baa-4aa5-961f-40c8e14ad4c9",
+      "metadata": {
+        "chunk_id": "94d74953-9df4-44f7-874a-0e5d7223fd42",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "1",
+        "page_no": "1",
+        "parent_id": "263be0af-38e7-48fd-8b43-f043006bbf40",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['CIVIE', 'civie']",
+        "section_title": "OUR SOLUTION",
+        "text": "# OUR SOLUTION ## Charge capture Integration with RIS and EHR systems for seamless data transfer - HL7 - Flat files - Fax - Charge ticket app to capture E&M charges - Robotic process automation (RPA) for screen scrape and more Charge capture audits - Automated capture of all billable services and procedures - Avoiding missed charges for ancillary s"
+      }
+    },
+    {
+      "chunk_index": 10,
+      "chunk_id": "088b2c54-e4ca-4a7c-9d93-db008e19e379",
+      "metadata": {
+        "chunk_id": "feff63d7-6e27-448b-952b-ea73b32b51ed",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "2",
+        "page_no": "1",
+        "parent_id": "f0634bf6-23e7-4241-a441-290f92716b8c",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['CIVIE', 'civie']",
+        "section_title": "BENEFITS & INDUSTRY IMPACT",
+        "text": "ptop screen displaying a \"Call Center\" dashboard with various service topics and a payment plan pop-up] © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. 33"
+      }
+    },
+    {
+      "chunk_index": 11,
+      "chunk_id": "bed68f6f-f052-4172-92d9-aa6305712e9a",
+      "metadata": {
+        "chunk_id": "a945373f-5ea9-4bcd-a198-38a803a2f369",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE', 'CIVIE', 'CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "1",
+        "page_no": "1",
+        "parent_id": "100940c4-a071-4f42-9c3c-496f110c19ea",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['table', 'tabular_data', 'company_info']",
+        "references_table": "True",
+        "searchable_terms": "['CIVIE', 'civie']",
+        "section_title": "CIVIE",
+        "table_type": "general_medical",
+        "text": "# CIVIE # RCM Solution ## CIVIE | Company Name ### MONTH 01, 2025 © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary."
+      }
+    },
+    {
+      "chunk_index": 12,
+      "chunk_id": "49679545-5c18-419c-bbb3-b78b2335d8de",
+      "metadata": {
+        "chunk_id": "0ce9c3b1-3329-4e93-842a-db035a8ad57e",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "2",
+        "page_no": "1",
+        "parent_id": "263be0af-38e7-48fd-8b43-f043006bbf40",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['CIVIE', 'civie']",
+        "section_title": "OUR SOLUTION",
+        "text": "ervices like contrast usage [The image contains a desktop computer screen showing a patient documentation interface and a mobile device screen displaying a medical ticketing system] © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. 15"
+      }
+    },
+    {
+      "chunk_index": 13,
+      "chunk_id": "d2b1ecd1-b19c-4015-9b92-56e1f7af4477",
+      "metadata": {
+        "chunk_id": "fb9208ec-f075-4300-a3ab-06fdfa3e5df9",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['40 %', '9:41', 'CIVIE', 'CIVIE', '40']",
+        "numerical_data": "[{'value': '40 %', 'type': 'measurements'}, {'value': '40', 'type': 'percentages'}]",
+        "order_idx": "3",
+        "page_no": "1",
+        "parent_id": "60a8bf26-c662-4c2f-914f-bf8b18845fdf",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['40 %', 'CIVIE', '40', 'civie', '9:41']",
+        "section_title": "BENEFITS & INDUSTRY IMPACT",
+        "text": "th: 40%;\"> 9:41 CareBot Our chatbot is here to assist you instantly Today 👋 Hello! I'm CareBot, Patient Folio's virtual assistant. Please select a topic: Request Statement Payment Update Insurance Why did I receive Bill? Other Patient Services Message... </div> © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 29"
+      }
+    },
+    {
+      "chunk_index": 14,
+      "chunk_id": "dcc571a2-3c4e-455d-81d0-a04ec38f44f6",
+      "metadata": {
+        "chunk_id": "e1c6884c-34e3-4aee-9512-896db84d47fb",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "1",
+        "page_no": "1",
+        "parent_id": "f0634bf6-23e7-4241-a441-290f92716b8c",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['CIVIE', 'civie']",
+        "section_title": "BENEFITS & INDUSTRY IMPACT",
+        "text": "# BENEFITS & INDUSTRY IMPACT ## Customer services - Dedicated support team with industry-specific expertise, available to assist patients promptly - 24/7 self-service through the patient portal, offering continuous access to billing, appointments, and payments [Two mobile phone screens showing a \"Call Center\" interface with payment options and a la"
+      }
+    },
+    {
+      "chunk_index": 15,
+      "chunk_id": "c37477ac-e6bb-476a-a6f9-def2b12207c6",
+      "metadata": {
+        "chunk_id": "b0b9b90e-f793-46df-949f-2c0fc280f3e5",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['75 %', '98 %', '22 %', '45 %', '28 %', '50 %', 'Dr. TedWen', 'Dr. Satish Mathan', 'CIVIE', 'CIVIE', 'CIVIE', 'CIVIE', 'CIVIE', 'CIVIE', 'CIVIE', 'CIVIE', '75', '98', '22', '45', '28', '50']",
+        "numerical_data": "[{'value': '75 %', 'type': 'measurements'}, {'value': '98 %', 'type': 'measurements'}, {'value': '22 %', 'type': 'measurements'}, {'value': '45 %', 'type': 'measurements'}, {'value': '28 %', 'type': 'measurements'}, {'value': '50 %', 'type': 'measurements'}, {'value': '75', 'type': 'percentages'}, {'value': '98', 'type': 'percentages'}, {'value': '22', 'type': 'percentages'}, {'value': '45', 'type': 'percentages'}, {'value': '28', 'type': 'percentages'}, {'value': '50', 'type': 'percentages'}]",
+        "order_idx": "1",
+        "page_no": "1",
+        "parent_id": "e40751ba-e8af-4cbf-a46b-86da111672f0",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['table', 'tabular_data', 'company_info']",
+        "references_table": "True",
+        "searchable_terms": "['45', '22', '50', '98 %', '98', '45 %', 'CIVIE', '75', 'Dr. TedWen', '28', '75 %', 'civie', 'radiology', '28 %', 'Dr. Satish Mathan', '50 %', '22 %']",
+        "section_title": "Contact Our Patient Service Team Select...",
+        "table_type": "performance_metrics",
+        "text": "| Contact Our Patient Service Team Select the topic of the inquiry Select the subject of the inquiry Send | 24/7 Availability The Process Of Your Radiology Report \\[Image of a mobile device with various icons around it] |  | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |  | Patient Online Services \\[Image of a mobile device with medical icons] Sign up to Our Site Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo. Get Your Personal Plan Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo. |  |  | \\[Image of a tablet device showing the following content] Medical Records Retrieval Frequently Asked Questions 7 out 10 Patient Portal Get started |  |\n|---|---|---|---|---|---|---|---|---|---|---|\n| PATIENT FEEDBACK We prioritize our patients, making their feedback essential for improving and refining our services through regular surveys | ![Patient Feedback Form](patient_feedback_form.png) Thank you for using PatientFolio! How was your experience? Let us know below. How would you rate your experience with PatientFolio? \\[5 empty star rating icons] Would you describe PatientFolio as user-friendly? \\[5 emoji faces ranging from very unhappy to very happy] Would you recommend PatientFolio to others? ○ Yes ○ No How can we make your experience using PatientFolio better? \\[Empty text area] Were there any issues that occurred? \\[Empty text area] \\[Send button] No Thanks |  | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 35 |  |  |  |  |  |  |\n| REFUND MODULE ## Patient surveys | ## 75%Patient portal<br/>adoption rate | ## 98%Positive patient<br/>feedback | ## 22%Reduction in<br/>billing inquiries |  | -------------------------------------- | ----------------------------------- | ---------------------------------------- |  | \"The portal is so easy to use! I'm not tech-savvy, but I had no issues finding my way around and getting things done quickly.\"Amy Coone | \"The payment process was super fast! It literally took me less than a minute to complete everything— such a relief!\"Ann Smith |\n| REFUND MODULE ## Data analytics & reporting - Real-time analytics for financial and operational performance - Customizable dashboards to track KPIs, payer performance, and claim status - Integrated Contract Variance/Incorrect Payments analysis to improve reimbursement rates and decrease future denials [A large image of a tablet or screen displaying multiple charts, graphs, and data visualizations, including bar charts, line graphs, heat maps, and tabular data.] © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 37 |  |  |  |  |  |  |  |  |  |  |\n| REFUND MODULE ## Data analytics & reporting | 77,535 | $16,545,750 | $2,576,749 |  | ------ | ----------- | ---------- |  | 2,815 | $17,727,589 |\n| REFUND MODULE ## Data analytics & reporting ```mermaid graph TD A[Computer Monitor] --> B[Data Analytics Dashboard] B --> C[Stacked Bar Chart] C --> D[X-axis: Time periods] C --> E[Y-axis: Numerical values] C --> F[Legend] F --> G[Competitive Value] F --> H[Current Refund] F --> I[Savings on Current] F --> J[Future Refund] F --> K[Savings on Future] F --> L[Expired Refund] F --> M[Savings on Expired] F --> N[Pending Refund] F --> O[Savings on Pending] F --> P[Rejected Refund] ``` © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 39 |  |  |  |  |  |  |  |  |  |  |\n| CASE STUDY: MODESTO ## Increase in payments per wRVU <div style=\"text-align: center;\"> ### Payment per wRVU Analysis </div> | Year | Payment per wRVU | Notes |  | ---- | ---------------- | --------------- |  | 2020 | $47.88 |\n| FINANCIAL IMPACT ## Clear ROI through reduced denials, faster reimbursements, and increased collections <div style=\"display: flex; justify-content: space-between;\"> <div style=\"width: 45%;\"> > \"CI's technology and workflow enhancements have been crucial in increasing our revenue by 28% and supporting our growing needs. Their solutions have allowed us to provide exceptional patient care, deliver more value to our partners, and improve our daily operations. Thanks to CI, I'm excited about practicing radiology again.\" > > Dr. TedWen </div> <div style=\"width: 50%;\"> ### Increase in Revenue | Year | Revenue |  | ---- | ------------------------ |  | 2019 |  |  | 2020 |\n> \"Their technology isn't just a tool — it's a game-changer for our practice.\" > > Dr. Satish Mathan © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 42"
+      }
+    },
+    {
+      "chunk_index": 16,
+      "chunk_id": "d82062f1-83f3-4350-986b-89626340e493",
+      "metadata": {
+        "chunk_id": "86799b2e-cc3e-42f7-8d3e-aa0271dd9ce6",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['48 hours', 'CIVIE', 'CIVIE', '48 hours']",
+        "numerical_data": "[{'value': '48 hours', 'type': 'measurements'}, {'value': '48 hours', 'type': 'tat_data'}]",
+        "order_idx": "1",
+        "page_no": "1",
+        "parent_id": "68ded3da-0687-4299-bb29-d9d0219f083e",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['performance_metrics', 'table', 'tabular_data', 'company_info']",
+        "references_table": "True",
+        "searchable_terms": "['CIVIE', 'scan', 'ct', '48 hours', 'civie', 'x-ray']",
+        "section_title": "NorthStar logo PatientFolio Welcome Let s...",
+        "table_type": "performance_metrics",
+        "text": "| !\\[NorthStar logo] PatientFolio Welcome! Let's make your payment easy and stress-free. Account Number Enter your account number Where can I find Account Number? \\[Continue] If you need help, please contact us. We will respond via email within 48 hours. ○ Contact Us \\[Image of two people sitting on a bench] | !\\[NorthStar logo] Balance Due ⓘ $1100.60 ˄ 3 statements Total Charges: $1980.60 (Charges are combined your 3 statements) Insurance Payment: -$700.00 Adjustment: $0.00 Total Balance: $1280.60 Prev Payment: -$180.00 Remaining Balance: $1100.60 Payment Due Date: Oct 15, 2024 Enter Card Details Name on Card John Doe Card Number 3092 - 9122 - 1212 - 9000 \\[VISA logo] Exp. Date CVV 09/29 892 ◯ Save this card for future payments \\[Pay 1100.60] | !\\[NorthStar logo] Home ☰ Balance Due ⓘ $1280.60 Payment Due Date: Oct 15, 2024 \\[Make Payment] Recent Statements See All CT Scan, X-Ray, ... $458.90 > May 15, 2024 CT Scan Head/Brain $458.90 > Dec 20, 2023 CT Scan Head/Brain Paid > Jun 5, 2023 Recent Payments See All July 30, 2024 -$200.00 > ○ Payment Processing Jun 30, 2024 -$100.00 > Confirmation #128390 ↓ Receipt Insurance added to your account Medical United Health Care |  | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |\n|---|---|---|---|---|---|---|\n| PatientFolio Balance Due (i) $1280.60 2 Statements Payment Due Date May 27, 2024 Enter Card Details Name on Card Enter Name on Card Card Number Scan or Enter Card Number VISA MASTERCARD Exp. Date \\ | CVV MM/YY \\ | Security Code \\[Toggle] Save this card for future payments \\[Pay 1280.60] patientfolio.com | Statement ≡ ← Statement Balance (3) (i) $1280.00 Select the plan that is best for you If this plan doesn't work, please Pay in full ○ 3 monthly payments of $296.67 Pay your balance more quickly ● 6 monthly payments of $148.48 Most chosen plan by users ○ 12 monthly payments of $74.24 Start with as low as possible \\[Continue] patientfolio.com | Negotiation ≡ Negotiation \\[Icon] Enter Amount Three chances to negotiate for a discount on bill Add Payment Method If offer is accepted, you enter payment method Pay Discounted Bill Pay reduced bill amount immediately. FAQs \\[Start Negotiation] patientfolio.com | Negotiation ≡ Enter Amount Your Total Balance is $1280.60 Last chance to negotiate $980.00 Please enter an amount greater than $900.00 Previous offers: $780.00 $900.00 \\[Check Offer] \\[Numeric Keypad] 1 2 3 4 5 6 7 8 9 . 0 ← |  |\n| ### Quick Pay Patients can make secure payments instantly. ### Flexible Payment Plans Easily set up and manage personalized payment plans. ### Balance Negotiation Conveniently negotiate outstanding balances online. | \\[Four smartphone screens showing different aspects of the patient payment system] Screen 1: Shows a payment interface with a balance due of $1280.60 and options to enter card details. Screen 2: Displays payment plan options, including: - 3 monthly payments of $298.67 - 6 monthly payments of $148.48 - 12 monthly payments of $74.24 Screen 3: A negotiation screen with an option to enter an amount and \"Start Negotiation\". Screen 4: An amount entry screen for negotiation, showing \"Your Total Balance is $1280.60\" and \"Last chance to negotiate $980.00\". |  | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. CIVIE 32 |  |"
+      }
+    },
+    {
+      "chunk_index": 17,
+      "chunk_id": "4ba5575a-a10a-4e48-b2b4-8fdb57a91a84",
+      "metadata": {
+        "chunk_id": "9d15843c-384c-4911-be0e-f6d8ecbb803a",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE', 'CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "1",
+        "page_no": "1",
+        "parent_id": "dc0d60de-e30f-4829-b72c-c7245695a855",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['CIVIE', 'civie']",
+        "section_title": "CIVIE",
+        "text": "# CIVIE ## Thank You We would be glad to answer any questions. © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary."
+      }
+    },
+    {
+      "chunk_index": 18,
+      "chunk_id": "2fb0b32e-4002-458f-aabc-cf6e01644dba",
+      "metadata": {
+        "chunk_id": "5de32084-d170-443a-b297-b87da01c57b2",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "4",
+        "page_no": "1",
+        "parent_id": "3fed6f07-c9af-4a92-bfaa-05344b133687",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['CIVIE', 'civie', 'radiology']",
+        "section_title": "INTRODUCTION",
+        "text": "fill:#ff69b4,stroke:#000000,stroke-width:2px style D fill:#800080,stroke:#000000,stroke-width:2px ``` © 2025 CIVIE. All Rights & Content Reserved. Confidential and Proprietary. 3"
+      }
+    },
+    {
+      "chunk_index": 19,
+      "chunk_id": "500737f0-41a0-47a5-81a8-d0ecf3720fd7",
+      "metadata": {
+        "chunk_id": "e1cc518d-8bd7-4448-9160-78e80ce337ae",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "[]",
+        "numerical_data": "[]",
+        "order_idx": "1",
+        "page_no": "1",
+        "parent_id": "126add23-1401-4e6b-8e92-f68de1017bbe",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['table', 'tabular_data']",
+        "references_table": "True",
+        "searchable_terms": "[]",
+        "section_title": "Introduction ----------------------------------------- The RCM challenges Our...",
+        "table_type": "financial_data",
+        "text": "| Introduction |  | ----------------------------------------- |  | The RCM challenges |  | Our comprehensive RCM solutions |  | Demonstrated benefits and industry impact |\n|---|---|---|---|---|---|---|---|---|\n| **Dhruv Chopra, MBA**<br/>Chief Executive Officer | **Preeth Hegde, MBA**<br/>Chief Financial Officer | **Bridget Haynes, MBA**<br/>Chief Revenue Officer |  |  | ------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------- | --------------------------------------------- |"
+      }
+    },
+    {
+      "chunk_index": 20,
+      "chunk_id": "cad7a117-10c0-48b1-b7ed-1e4e66496e06",
+      "metadata": {
+        "chunk_id": "38185d2e-fd67-46d3-850b-192b6057d280",
+        "chunk_type": "child_chunk",
+        "contains_phi": "True",
+        "doc_id": "5c67ae7c-caf1-4829-ab43-5f3b5e7e6d9c",
+        "medical_entities": "['CIVIE']",
+        "numerical_data": "[]",
+        "order_idx": "3",
+        "page_no": "1",
+        "parent_id": "3fed6f07-c9af-4a92-bfaa-05344b133687",
+        "pdf_name": "CIVIE-RCM.pdf",
+        "primary_topics": "['standard', 'company_info']",
+        "references_table": "False",
+        "searchable_terms": "['CIVIE', 'civie', 'radiology']",
+        "section_title": "INTRODUCTION",
+        "text": "ad. Our innovations are designed to adapt to the evolving healthcare landscape, ensuring sustainability and competitiveness. ```mermaid graph TD A[United States Map] B[SOL RADIOLOGY] C[TRRA] D[Raleigh Radiology] A --> B A --> C A --> D style A fill:#cccccc,stroke:#000000,stroke-width:2px style B fill:#ffa500,stroke:#000000,stroke-width:2px style C "
+      }
+    }
+  ],
+  "summary": {
+    "total_parent_chunks": 13,
+    "total_child_chunks": 20,
+    "total_chunks": 33
+  }
+}

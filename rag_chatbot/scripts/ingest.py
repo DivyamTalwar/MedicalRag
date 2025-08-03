@@ -226,43 +226,112 @@ class MedicalSemanticChunker():
         lines = text.strip().split('\n')
         first_line = lines[0].strip() if lines else ""
         
-        markdown_match = re.match(r'^#{1,6}\s+(.+?)(?:\s+#{1,6}.*)?(?:\s+##.*)?$', first_line)
+        markdown_match = re.match(r'^#{1,6}\s+(.+)', first_line)
         if markdown_match:
             title = markdown_match.group(1).strip()
-            title = re.split(r'\s+[-–—]\s+|\s+##\s+', title)[0]
-            title_words = title.split()
-            if len(title_words) > 8:
-                return ' '.join(title_words[:8]) + "..."
+            title = re.split(r'\s+[-–—]\s+|\s+UP\s+|\s+\|\s+|\s+&\s+[A-Z]', title)[0]
+            
+            words = title.split()
+            truncated_words = []
+            for word in words:
+                if len(truncated_words) >= 2 and word.islower() and not word.startswith('('):
+                    break
+                truncated_words.append(word)
+            
+            title = ' '.join(truncated_words)
+            
+            if len(title.split()) > 6:
+                title = ' '.join(title.split()[:6]) + "..."
+            
             return title
+        
+        business_match = re.match(r'^([A-Z][A-Z\s&-]+?)(?:\s+[A-Z]*[a-z]|\s+UP\s+|\s+[-–—])', first_line)
+        if business_match:
+            return business_match.group(1).strip()
         
         medical_match = re.match(r'^([A-Z][A-Z\s&]+?):', first_line)
         if medical_match:
             return medical_match.group(1).strip()
         
-        company_match = re.match(r'^(RadPod|CIVIE|RADPOD)(?:\s+[-–—]\s+(.+?))?', first_line, re.IGNORECASE)
+        company_match = re.match(r'^(RadPod|CIVIE|RADPOD)(?:\s+[-–—]\s+(.{1,30}))?', first_line, re.IGNORECASE)
         if company_match:
             if company_match.group(2):
-                return f"{company_match.group(1)} - {company_match.group(2)[:50]}"
+                return f"{company_match.group(1)} - {company_match.group(2)}"
             return company_match.group(1)
         
-        if (re.match(r'^[A-Z][a-z].*[a-z]$', first_line) and 
-            len(first_line.split()) <= 6 and 
-            len(first_line) <= 50):
-            return first_line
-        
-        if first_line:
-            clean_title = re.sub(r'^#{1,6}\s*', '', first_line)
-            clean_title = re.sub(r'[^\w\s&-]', ' ', clean_title)
-            clean_title = re.sub(r'\s+', ' ', clean_title).strip()
-            
-            # Take first meaningful words
+        if re.match(r'^[A-Z]', first_line):
+            clean_title = re.split(r'\s+UP\s+|\s+Leveraging\s+|\s+featuring\s+|\s+with\s+', first_line)[0]
             words = clean_title.split()
-            if words:
-                if len(words) > 6:
-                    return ' '.join(words[:6]) + "..."
+            if 2 <= len(words) <= 5:
                 return clean_title
         
+        if first_line:
+            words = first_line.split()[:4]
+            return ' '.join(words)
+        
         return "Untitled Section"
+
+    def _optimize_chunk_boundaries(self, chunks: List[str], target_size: int = 2000) -> List[str]:
+        optimized_chunks = []
+        
+        i = 0
+        while i < len(chunks):
+            current_chunk = chunks[i]
+            
+            if len(current_chunk) < target_size * 0.4 and i < len(chunks) - 1:
+                next_chunk = chunks[i + 1]
+                
+                if len(current_chunk) + len(next_chunk) <= target_size * 1.2:
+                    merged_chunk = current_chunk + "\n\n" + next_chunk
+                    optimized_chunks.append(merged_chunk)
+                    i += 2
+                    continue
+            
+            if len(current_chunk) > target_size * 1.3:
+                split_chunks = self._smart_split_chunk(current_chunk, target_size)
+                optimized_chunks.extend(split_chunks)
+            else:
+                optimized_chunks.append(current_chunk)
+            
+            i += 1
+        
+        return optimized_chunks
+
+    def _smart_split_chunk(self, chunk: str, target_size: int) -> List[str]:
+        lines = chunk.split('\n')
+        
+        split_points = []
+        for i, line in enumerate(lines):
+            if i > 0 and (
+                re.match(r'^#{1,6}\s+', line) or  
+                re.match(r'^\s*[•\-\*]\s+', line) or 
+                '|' in line and '|' not in lines[i-1] or 
+                re.match(r'^[A-Z]{2,}:', line) 
+            ):
+                split_points.append(i)
+        
+        if not split_points:
+            for i, line in enumerate(lines):
+                if i > 0 and line.strip() == '' and lines[i-1].strip() != '':
+                    split_points.append(i)
+        
+        chunks = []
+        start = 0
+        current_size = 0
+        
+        for i, line in enumerate(lines):
+            current_size += len(line)
+            
+            if (i in split_points and current_size >= target_size * 0.6) or current_size >= target_size * 1.2:
+                if start < i:
+                    chunks.append('\n'.join(lines[start:i]))
+                    start = i
+                    current_size = 0
+        
+        if start < len(lines):
+            chunks.append('\n'.join(lines[start:]))
+        
+        return [chunk for chunk in chunks if len(chunk.strip()) > 50]
 
     def create_parent_chunks(self, text: str, doc_metadata: Dict) -> List[TextNode]:
         boundaries = self._identify_semantic_boundaries(text)
@@ -270,41 +339,45 @@ class MedicalSemanticChunker():
         if not boundaries:
             return self._size_based_parent_chunks(text, doc_metadata)
         
-        parent_chunks = []
         lines = text.split('\n')
+        initial_chunks = []
         
         for i, start_boundary in enumerate(boundaries):
             end_boundary = boundaries[i + 1] if i + 1 < len(boundaries) else len(lines)
-            
             chunk_lines = lines[start_boundary:end_boundary]
             chunk_text = '\n'.join(chunk_lines).strip()
             
             if len(chunk_text) > 50:
-                entities = self.entity_extractor.extract_entities(chunk_text)
-                
-                section_type = self._classify_section_type(chunk_text)
-                
-                parent_metadata = EnhancedMedicalMetadata(
-                    doc_id=doc_metadata['doc_id'],
-                    parent_id=None,
-                    pdf_name=doc_metadata['pdf_name'],
-                    page_no=doc_metadata.get('page_no', 1),
-                    order_idx=i,
-                    chunk_type=f"parent_{section_type}",
-                    section_title=self._extract_section_title(chunk_text),
-                    medical_entities=self._flatten_entities(entities),
-                    numerical_data=self._extract_numerical_context(entities),
-                    contains_phi=self._detect_phi(chunk_text),
-                    references_table='|' in chunk_text,
-                    table_type=self._classify_table_type(chunk_text) if '|' in chunk_text else None,
-                    primary_topics=self._extract_topics(chunk_text),
-                    searchable_terms=self._create_searchable_terms(entities, chunk_text)
-                )
-                
-                parent_chunks.append(TextNode(
-                    text=chunk_text,
-                    metadata=parent_metadata.model_dump()
-                ))
+                initial_chunks.append(chunk_text)
+        
+        optimized_chunks = self._optimize_chunk_boundaries(initial_chunks, self.parent_chunk_size)
+        
+        parent_chunks = []
+        for i, chunk_text in enumerate(optimized_chunks):
+            entities = self.entity_extractor.extract_entities(chunk_text)
+            section_type = self._classify_section_type(chunk_text)
+            
+            parent_metadata = EnhancedMedicalMetadata(
+                doc_id=doc_metadata['doc_id'],
+                parent_id=None,
+                pdf_name=doc_metadata['pdf_name'],
+                page_no=doc_metadata.get('page_no', 1),
+                order_idx=i,
+                chunk_type=f"parent_{section_type}",
+                section_title=self._extract_section_title(chunk_text), 
+                medical_entities=self._flatten_entities(entities),
+                numerical_data=self._extract_numerical_context(entities),
+                contains_phi=self._detect_phi(chunk_text),
+                references_table='|' in chunk_text,
+                table_type=self._classify_table_type(chunk_text) if '|' in chunk_text else None,
+                primary_topics=self._extract_topics(chunk_text),
+                searchable_terms=self._create_searchable_terms(entities, chunk_text)
+            )
+            
+            parent_chunks.append(TextNode(
+                text=chunk_text,
+                metadata=parent_metadata.model_dump()
+            ))
         
         return parent_chunks
 
@@ -583,7 +656,6 @@ async def multi_pass_processing(pdf_files: List[str]) -> List[Any]:
         except Exception as e:
             logging.error(f"Standard pass failed for {pdf_file}: {e}")
         
-        # Table-focused pass
         try:
             table_result = await asyncio.to_thread(
                 SimpleDirectoryReader(input_files=[pdf_file], file_extractor={".pdf": parser_tables}).load_data

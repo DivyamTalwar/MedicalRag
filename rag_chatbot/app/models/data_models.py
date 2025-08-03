@@ -8,7 +8,6 @@ class EnhancedMedicalMetadata(BaseModel):
     chunk_id: Optional[str] = None 
     parent_id: Optional[UUID] = None
     
-    # Document context
     pdf_name: str
     page_no: int
     order_idx: int
