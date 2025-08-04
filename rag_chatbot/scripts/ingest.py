@@ -25,6 +25,7 @@ from pinecone.exceptions import PineconeException
 from pymongo import MongoClient
 from bson.codec_options import CodecOptions, UuidRepresentation
 from app.models.data_models import DocumentChunk, EnhancedMedicalMetadata
+from app.core.extractor import MedicalEntityExtractor
 from llama_index.core.node_parser import NodeParser
 from llama_index.core.schema import BaseNode, TextNode
 
@@ -160,35 +161,6 @@ def process_complete_table(table_lines: List[str]) -> List[str]:
     return processed
 
 
-class MedicalEntityExtractor:    
-    def __init__(self):
-        self.medical_patterns = {
-            'measurements': r'(\d+(?:\.\d+)?)\s*(minutes?|hours?|days?|%|mm|cm|mg|ml)',
-            'phone_numbers': r'\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}',
-            'medical_codes': r'[A-Z]{2,}-\d{4,}',
-            'dates': r'\d{1,2}[/-]\d{1,2}[/-]\d{2,4}',
-            'times': r'\d{1,2}:\d{2}(?:\s*[AP]M)?',
-            'radiologist_names': r'Dr\.?\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*',
-            'medical_facilities': r'(Hospital|Medical Center|Clinic|RadPod|CIVIE)',
-            'tat_data': r'(\d+)\s*(min|minutes?|hrs?|hours?)',
-            'percentages': r'(\d+(?:\.\d+)?)\s*%',
-        }
-    
-    def extract_entities(self, text: str) -> Dict[str, List[str]]:
-        entities = {}
-        
-        for entity_type, pattern in self.medical_patterns.items():
-            matches = re.findall(pattern, text, re.IGNORECASE)
-            if matches:
-                if matches and isinstance(matches[0], tuple):
-                    entities[entity_type] = [' '.join(match) if isinstance(match, tuple) else match for match in matches]
-                else:
-                    entities[entity_type] = matches
-            else:
-                entities[entity_type] = []
-        
-        return entities
-    
 class MedicalSemanticChunker():    
     def __init__(self, parent_chunk_size: int = 2000,child_chunk_size: int = 350,chunk_overlap: int = 40):
         self.parent_chunk_size = parent_chunk_size
@@ -396,9 +368,6 @@ class MedicalSemanticChunker():
             )
             chunks.append(TextNode(text=chunk_text, metadata=parent_metadata.model_dump()))
         return chunks
-
-    def _flatten_entities(self, entities: Dict) -> List[str]:
-        return [item for sublist in entities.values() for item in sublist if item]
 
     def _extract_numerical_context(self, entities: Dict) -> List[Dict]:
         numerical_data = []
