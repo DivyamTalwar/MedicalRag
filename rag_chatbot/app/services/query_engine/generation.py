@@ -3,9 +3,6 @@ from typing import List, Dict, Any
 from app.core.llm import CustomLLM
 
 class CitationManager:
-    """
-    Manages the generation and tracking of citations for the LLM response.
-    """
     def __init__(self, context_chunks: List[Dict]):
         self.context_chunks = context_chunks
         self.citation_map = {
@@ -13,7 +10,6 @@ class CitationManager:
         }
 
     def get_formatted_sources(self) -> str:
-        """Formats the source chunks for inclusion in the prompt."""
         formatted_sources = []
         for i, chunk in enumerate(self.context_chunks):
             metadata = chunk.get('metadata', {})
@@ -28,10 +24,6 @@ class CitationManager:
         return "\n---\n".join(formatted_sources)
 
     def format_citations(self, response_text: str) -> str:
-        """
-        Finds citation markers like [1], [2], etc., in the text and replaces
-        them with properly formatted, detailed citations.
-        """
         def replace_func(match):
             try:
                 source_num = int(match.group(1))
@@ -43,41 +35,23 @@ class CitationManager:
                     )
             except (ValueError, IndexError):
                 pass
-            return match.group(0) # Return original if not a valid citation
+            return match.group(0)
 
         return re.sub(r'\[(\d+)\]', replace_func, response_text)
 
 class MedicalResponseValidator:
-    """
-    Ensures that the generated response meets medical accuracy and compliance standards.
-    """
     def validate(self, response: str, citations_present: bool) -> bool:
-        """
-        Performs validation checks on the LLM's response.
-
-        Args:
-            response: The generated text from the LLM.
-            citations_present: A boolean indicating if citations were found.
-
-        Returns:
-            True if the response is valid, False otherwise.
-        """
-        # 1. Check for mandatory disclaimer
         disclaimer = "this information is for informational purposes only"
         if disclaimer not in response.lower():
             return False
         
-        # 2. Ensure claims are cited
         if not citations_present and len(response.split()) > 20:
-             # Allow short, non-informational responses without citations
             return False
 
-        # 3. Check for diagnostic language
         diagnostic_phrases = ["you have", "you are suffering from", "the diagnosis is"]
         if any(phrase in response.lower() for phrase in diagnostic_phrases):
             return False
 
-        # 4. Check for hallucination indicators
         hallucination_phrases = [
             "i think", "i believe", "probably", "it seems like",
             "based on my knowledge", "in general"
@@ -85,16 +59,12 @@ class MedicalResponseValidator:
         if any(phrase in response.lower() for phrase in hallucination_phrases):
             return False
             
-        # 5. Ensure medical context is preserved
         if len(response.split()) > 50 and "[source:" not in response.lower():
             return False
             
         return True
 
 class AnswerGenerator:
-    """
-    Generates the final, cited, and validated answer.
-    """
     def __init__(self, llm: CustomLLM):
         self.llm = llm
         self._prompt_template = self._create_prompt_template()
@@ -111,24 +81,14 @@ class AnswerGenerator:
             "3. **No Outside Knowledge:** Do not use any information not present in the provided sources.\n"
             "4. **Disclaimer:** Conclude your response with the mandatory disclaimer: "
             "'This information is for informational purposes only and does not constitute medical advice.'\n\n"
-            "--- SOURCES ---\n"
+            "SOURCES\n"
             "{formatted_sources}\n\n"
-            "--- QUESTION ---\n"
+            "QUESTION\n"
             "{question}\n\n"
-            "--- ANSWER ---\n"
+            "ANSWER\n"
         )
 
     def generate(self, query: str, context_chunks: List[Dict]) -> str:
-        """
-        Generates the final answer.
-
-        Args:
-            query: The user's standalone question.
-            context_chunks: The final list of context chunks.
-
-        Returns:
-            A formatted, cited, and validated final answer.
-        """
         citation_manager = CitationManager(context_chunks)
         formatted_sources = citation_manager.get_formatted_sources()
 
@@ -139,7 +99,6 @@ class AnswerGenerator:
 
         raw_response = self.llm.complete(prompt).text
 
-        # Validation
         validator = MedicalResponseValidator()
         citations_found = bool(re.search(r'\[\d+\]', raw_response))
         
@@ -149,7 +108,6 @@ class AnswerGenerator:
                 "Please try rephrasing your question."
             )
 
-        # Add detailed citations
         final_response = citation_manager.format_citations(raw_response)
 
         return final_response

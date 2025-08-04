@@ -29,7 +29,6 @@ class ChatResponse(BaseModel):
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
-    """Chat endpoint with agent integration"""
     try:
         chat_history = []
         for msg in request.chat_history:
@@ -100,7 +99,6 @@ async def chat_endpoint(request: ChatRequest):
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
     return {
         "status": "healthy",
         "service": "Medical RAG Chatbot",
@@ -110,7 +108,6 @@ async def health_check():
 
 @app.get("/")
 async def root():
-    """Root endpoint"""
     return {
         "message": "Medical RAG Chatbot API",
         "version": "4.0.0",

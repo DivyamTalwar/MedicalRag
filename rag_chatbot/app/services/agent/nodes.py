@@ -4,14 +4,24 @@ import logging
 from typing import Dict, List, Any, Optional
 from .state import AgentState
 from rag_chatbot.app.models.data_models import Document
-from rag_chatbot.app.services.query_engine.transformation import QueryTransformer, MedicalQueryExpander
-from rag_chatbot.app.services.query_engine.search import DenseSearchEngine, SparseSearchEngine, ResultMerger, CrossEncoderReranker
-from rag_chatbot.app.services.query_engine.generation import AnswerGenerator, HyDEGenerator
+from rag_chatbot.app.services.query_engine.transformation import (
+    QueryCondenser, 
+    MedicalQueryExpander, 
+    HyDEGenerator
+)
+from rag_chatbot.app.services.query_engine.search import (
+    DenseSearchEngine, 
+    SparseSearchEngine, 
+    ResultMerger, 
+    CrossEncoderReranker
+)
+from rag_chatbot.app.services.query_engine.generation import AnswerGenerator
 from rag_chatbot.app.services.query_engine.context import ContextAssembler, ContextManager
+from rag_chatbot.app.core.extractor import MedicalEntityExtractor
 
 class CondenseQuestionNode:
-    def __init__(self, query_transformer: QueryTransformer):
-        self.query_transformer = query_transformer
+    def __init__(self, query_condenser: QueryCondenser):
+        self.query_condenser = query_condenser
 
     def run(self, state: AgentState) -> Dict[str, Any]:
         start_time = time.time()
@@ -19,7 +29,7 @@ class CondenseQuestionNode:
         query = state["query_state"]["original_query"]
         chat_history = state["query_state"]["chat_history"]
         
-        condensed_query = self.query_transformer.condense(query, chat_history)
+        condensed_query = self.query_condenser.condense(query, chat_history)
         
         processing_time = time.time() - start_time
         
@@ -33,14 +43,14 @@ class CondenseQuestionNode:
         }
 
 class DecomposeQueryNode:
-    def __init__(self, query_transformer: QueryTransformer):
-        self.query_transformer = query_transformer
+    def __init__(self, entity_extractor: MedicalEntityExtractor):
+        self.entity_extractor = entity_extractor
 
     def run(self, state: AgentState) -> Dict[str, Any]:
         start_time = time.time()
         
         query = state["query_state"]["condensed_query"]
-        medical_entities = self.query_transformer.extract_medical_entities(query)
+        medical_entities = self.entity_extractor.extract_entities(query)
         
         processing_time = time.time() - start_time
         
@@ -55,9 +65,9 @@ class DecomposeQueryNode:
 
 class RetrieveAndRankNode:
     def __init__(self, hyde_generator: HyDEGenerator, query_expander: MedicalQueryExpander, 
-                 dense_searcher: DenseSearchEngine, sparse_searcher: SparseSearchEngine, 
-                 result_merger: ResultMerger, reranker: CrossEncoderReranker, 
-                 context_assembler: ContextAssembler):
+                dense_searcher: DenseSearchEngine, sparse_searcher: SparseSearchEngine, 
+                result_merger: ResultMerger, reranker: CrossEncoderReranker, 
+                context_assembler: ContextAssembler):
         self.hyde_generator = hyde_generator
         self.query_expander = query_expander
         self.dense_searcher = dense_searcher
@@ -162,10 +172,6 @@ class GenerateAnswerNode:
         return citations
 
     def _create_streaming_generator(self, answer: str, citations: List[Dict]):
-        # Yield answer in small, non-blocking chunks.
-        # time.sleep(0) is used to ensure the event loop can process other tasks,
-        # preventing the stream from appearing sluggish. No explicit flush is needed
-        # as the framework handles it automatically.
         for i in range(0, len(answer), 32):
             yield answer[i:i+32]
             time.sleep(0)
@@ -181,13 +187,10 @@ class GenerateAnswerNode:
         
         yield sources_section
 class HandleErrorNode:
-    """A dedicated node to handle errors gracefully."""
     def run(self, state: AgentState) -> Dict[str, Any]:
-        """Processes the error, logs detailed traceback, and prepares a user-friendly response."""
         error_message = state["error_state"].get("error_message", "An unknown error occurred.")
         failed_node = state["error_state"].get("failed_node", "Unknown")
         
-        # Log the error with full traceback for detailed debugging
         logging.exception(f"Exception caught in node '{failed_node}': {error_message}")
         
         user_response = "I apologize, but I encountered an issue while processing your request. Please try again or rephrase your question."

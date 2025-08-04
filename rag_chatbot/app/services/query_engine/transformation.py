@@ -5,10 +5,6 @@ from app.core.llm import CustomLLM
 from app.core.extractor import MedicalEntityExtractor
 
 class QueryCondenser:
-    """
-    Transforms a conversational query into a standalone, searchable question
-    by incorporating context from the chat history.
-    """
     def __init__(self, llm: CustomLLM):
         self.llm = llm
         self._template = self._create_template()
@@ -25,16 +21,6 @@ class QueryCondenser:
         )
 
     def condense(self, question: str, chat_history: List[ChatMessage]) -> str:
-        """
-        Condenses the user query using the chat history.
-
-        Args:
-            question: The user's follow-up question.
-            chat_history: The history of the conversation.
-
-        Returns:
-            A standalone, searchable question.
-        """
         if not chat_history:
             return question
 
@@ -49,9 +35,6 @@ class QueryCondenser:
         return response.text.strip()
 
 class HyDEGenerator:
-    """
-    Generates a hypothetical document (a perfect answer) to improve vector search precision.
-    """
     def __init__(self, llm: CustomLLM):
         self.llm = llm
         self.templates = self._create_templates()
@@ -90,7 +73,6 @@ class HyDEGenerator:
         }
 
     def _classify_query_type(self, query: str) -> str:
-        """Classifies the query to select the best template."""
         query_lower = query.lower()
         if any(term in query_lower for term in ["finding", "impression", "report", "scan result"]):
             return "clinical_findings"
@@ -101,15 +83,6 @@ class HyDEGenerator:
         return "default"
 
     def generate(self, query: str) -> str:
-        """
-        Generates a hypothetical document based on the query.
-
-        Args:
-            query: The condensed, standalone query.
-
-        Returns:
-            A string containing the hypothetical document.
-        """
         query_type = self._classify_query_type(query)
         template = self.templates[query_type]
         prompt = template.format(query=query)
@@ -119,9 +92,6 @@ class HyDEGenerator:
         return response.text.strip()
 
 class MedicalQueryExpander:
-    """
-    Leverages extracted medical entities for query expansion to be used in sparse search.
-    """
     def __init__(self):
         self.entity_extractor = MedicalEntityExtractor()
         self.synonym_map = {
@@ -133,24 +103,13 @@ class MedicalQueryExpander:
         }
 
     def expand(self, query: str) -> List[str]:
-        """
-        Expands the query with medical synonyms and related terms.
-
-        Args:
-            query: The condensed, standalone query.
-
-        Returns:
-            A list of original and expanded search terms.
-        """
         entities = self.entity_extractor.extract_entities(query)
         flat_entities = self.entity_extractor.flatten_entities(entities)
         
         expanded_terms = set(flat_entities)
         
-        # Add original query words
         expanded_terms.update(query.lower().split())
 
-        # Add synonyms
         for term in query.lower().split():
             term = term.strip(".,?!")
             if term in self.synonym_map:
