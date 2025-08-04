@@ -3,40 +3,32 @@ import logging
 from typing import List, Dict, Any
 from pymongo import MongoClient
 from bson.codec_options import CodecOptions, UuidRepresentation
-import tiktoken
 
 class ContextAssembler:
     """
-    Assembles the final context for the LLM by retrieving parent chunks,
-    sorting them intelligently, and managing the token budget.
+    Assembles the final context for the LLM by retrieving and sorting parent chunks.
     """
-    def __init__(self, db_name: str = "AdvanceRag", token_budget: int = 6000):
+    def __init__(self, db_name: str = "AdvanceRag"):
         self.mongo_client = MongoClient(os.getenv("MONGO_URI"))
         codec_options = CodecOptions(uuid_representation=UuidRepresentation.STANDARD)
         self.db = self.mongo_client.get_database(db_name, codec_options=codec_options)
-        self.collection = self.db.get_collection(db_name)
-        self.token_budget = token_budget
-        try:
-            self.tokenizer = tiktoken.get_encoding("cl100k_base")
-        except:
-            self.tokenizer = tiktoken.get_encoding("gpt2")
+        self.collection = self.db.get_collection("medical_chunks")
 
-
-    def assemble(self, reranked_chunks: List[Dict]) -> str:
+    def assemble(self, reranked_chunks: List[Dict]) -> List[Dict]:
         """
-        Assembles the final context string from the re-ranked child chunks.
+        Assembles the final context by fetching and sorting parent chunks.
 
         Args:
-            reranked_chunks: The top 8 re-ranked chunks.
+            reranked_chunks: The top re-ranked child chunks.
 
         Returns:
-            A single string containing the formatted context for the LLM.
+            A sorted list of parent chunk documents.
         """
         parent_ids = self._extract_parent_ids(reranked_chunks)
         parent_chunks = self._fetch_parent_chunks(parent_ids)
         sorted_chunks = self._intelligent_sort(parent_chunks)
         
-        return self._build_context_string(sorted_chunks)
+        return sorted_chunks
 
     def _extract_parent_ids(self, reranked_chunks: List[Dict]) -> List[str]:
         """Extracts unique parent IDs from the re-ranked chunks."""
@@ -74,37 +66,3 @@ class ContextAssembler:
             return (page_no, order_idx)
             
         return sorted(chunks, key=sort_key)
-
-    def _build_context_string(self, sorted_chunks: List[Dict]) -> str:
-        """Builds the final context string, managing the token budget."""
-        context_str = ""
-        current_tokens = 0
-
-        for chunk in sorted_chunks:
-            metadata = chunk.get('metadata', {})
-            text = chunk.get('text', '')
-            
-            # Format the chunk with its metadata
-            formatted_chunk = (
-                f"--- Source Document: {metadata.get('pdf_name', 'N/A')}, "
-                f"Page: {metadata.get('page_no', 'N/A')} ---\n"
-                f"Section: {metadata.get('section_title', 'N/A')}\n\n"
-                f"{text}\n\n"
-            )
-            
-            chunk_token_count = len(self.tokenizer.encode(formatted_chunk))
-            
-            if current_tokens + chunk_token_count > self.token_budget:
-                # Truncate the last chunk if it exceeds the budget
-                remaining_tokens = self.token_budget - current_tokens
-                if remaining_tokens > 100: # Only add if there's meaningful space
-                    encoded_text = self.tokenizer.encode(formatted_chunk)
-                    truncated_encoded_text = encoded_text[:remaining_tokens]
-                    truncated_text = self.tokenizer.decode(truncated_encoded_text)
-                    context_str += truncated_text
-                break 
-
-            context_str += formatted_chunk
-            current_tokens += chunk_token_count
-            
-        return context_str.strip()

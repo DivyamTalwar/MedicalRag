@@ -60,10 +60,16 @@ class SparseSearchEngine:
     Finds keyword-relevant content using MongoDB's text search capabilities.
     """
     def __init__(self, db_name: str = "AdvanceRag"):
-        self.mongo_client = MongoClient(os.getenv("MONGO_URI"))
+        self.mongo_client = MongoClient(
+            os.getenv("MONGO_URI"),
+            maxPoolSize=50,
+            minPoolSize=10,
+            maxIdleTimeMS=30000,
+            serverSelectionTimeoutMS=5000
+        )
         codec_options = CodecOptions(uuid_representation=UuidRepresentation.STANDARD)
         self.db = self.mongo_client.get_database(db_name, codec_options=codec_options)
-        self.collection = self.db.get_collection(db_name)
+        self.collection = self.db.get_collection("medical_chunks")
         self._ensure_text_index()
 
     def _ensure_text_index(self):
@@ -131,6 +137,14 @@ class ResultMerger:
         Returns:
             A combined and deduplicated list of results.
         """
+        if not dense_results and not sparse_results:
+            return []
+
+        if not dense_results:
+            dense_weight = 0.0
+        elif not sparse_results:
+            dense_weight = 1.0
+            
         # Normalize scores
         max_dense_score = max([r['score'] for r in dense_results], default=1.0)
         max_sparse_score = max([r['score'] for r in sparse_results], default=1.0)

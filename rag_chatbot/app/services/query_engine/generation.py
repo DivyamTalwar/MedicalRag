@@ -76,6 +76,18 @@ class MedicalResponseValidator:
         diagnostic_phrases = ["you have", "you are suffering from", "the diagnosis is"]
         if any(phrase in response.lower() for phrase in diagnostic_phrases):
             return False
+
+        # 4. Check for hallucination indicators
+        hallucination_phrases = [
+            "i think", "i believe", "probably", "it seems like",
+            "based on my knowledge", "in general"
+        ]
+        if any(phrase in response.lower() for phrase in hallucination_phrases):
+            return False
+            
+        # 5. Ensure medical context is preserved
+        if len(response.split()) > 50 and "[source:" not in response.lower():
+            return False
             
         return True
 

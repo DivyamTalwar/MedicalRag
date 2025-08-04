@@ -269,6 +269,17 @@ class MedicalSemanticChunker():
         
         return optimized_chunks
 
+    def _flatten_entities(self, entities: Dict) -> List[str]:
+        flattened = []
+        for entity_type, entity_list in entities.items():
+            if isinstance(entity_list, list):
+                flattened.extend([str(entity) for entity in entity_list])
+            elif isinstance(entity_list, str):
+                flattened.append(entity_list)
+            else:
+                flattened.append(str(entity_list))
+        return list(set(flattened))
+
     def _smart_split_chunk(self, chunk: str, target_size: int) -> List[str]:
         lines = chunk.split('\n')
         
