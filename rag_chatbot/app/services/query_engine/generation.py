@@ -1,6 +1,7 @@
 import re
 from typing import List, Dict, Any
 from rag_chatbot.app.core.llm import CustomLLM
+from rag_chatbot.app.models.data_models import Document
 
 class CitationManager:
     def __init__(self, context_chunks: List[Dict]):
@@ -63,7 +64,7 @@ class AnswerGenerator:
             "ANSWER\n"
         )
 
-    def generate(self, query: str, context_chunks: List[Dict]) -> str:
+    def generate(self, query: str, context_chunks: List[Document]) -> tuple[str, str]:
         citation_manager = CitationManager(context_chunks)
         formatted_sources = citation_manager.get_formatted_sources()
 
@@ -72,8 +73,8 @@ class AnswerGenerator:
             question=query
         )
 
-        raw_response = self.llm.complete(prompt).text
-
+        # Use the .invoke() method for the new client and access the .content attribute
+        raw_response = self.llm.invoke(prompt).content
         final_response = citation_manager.format_citations(raw_response)
 
-        return final_response
+        return raw_response, final_response

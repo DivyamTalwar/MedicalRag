@@ -5,7 +5,7 @@ import json
 
 load_dotenv()
 
-def fetch_pdf_metadata(pdf_name="CIVIE-RCM.pdf"):
+def fetch_pdf_metadata(pdf_name="CIVIE-RIS.pdf"):
     pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
     
     PARENT_INDEX_NAME = "parent"
@@ -80,13 +80,13 @@ def fetch_pdf_metadata(pdf_name="CIVIE-RCM.pdf"):
     
     return all_metadata
 
-def save_metadata_to_file(metadata_dict, filename="civie_rcm_metadata.json"):
+def save_metadata_to_file(metadata_dict, filename="civie_ris_metadata.json"):
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(metadata_dict, f, indent=2, ensure_ascii=False)
     print(f"\nAll metadata saved to: {filename}")
 
 if __name__ == "__main__":
-    metadata = fetch_pdf_metadata("CIVIE-RCM.pdf")
+    metadata = fetch_pdf_metadata("CIVIE-RIS.pdf")
     
     save_metadata_to_file(metadata)
     

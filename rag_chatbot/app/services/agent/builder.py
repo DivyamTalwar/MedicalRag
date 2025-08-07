@@ -3,14 +3,12 @@ from .nodes import (
     CondenseQuestionNode,
     DecomposeQueryNode,
     RetrieveAndRankNode,
-    CritiqueContextNode,
     GenerateAnswerNode,
     HandleErrorNode,
 )
-from rag_chatbot.app.services.query_engine.transformation import QueryCondenser, HyDEGenerator, MedicalQueryExpander
-from rag_chatbot.app.services.query_engine.search import DenseSearchEngine, SparseSearchEngine, ResultMerger, CrossEncoderReranker
+from rag_chatbot.app.services.query_engine.transformation import QueryCondenser, MedicalQueryExpander
+from rag_chatbot.app.services.query_engine.search import InMeiliSearch, Reranker
 from rag_chatbot.app.services.query_engine.generation import AnswerGenerator
-from rag_chatbot.app.services.query_engine.context import ContextAssembler, ContextManager
 from rag_chatbot.app.core.llm import CustomLLM
 from rag_chatbot.app.core.extractor import MedicalEntityExtractor
 
@@ -20,22 +18,13 @@ def build_medical_rag_agent() -> MedicalRAGAgent:
     query_condenser = QueryCondenser(llm=llm)
     entity_extractor = MedicalEntityExtractor()
     query_expander = MedicalQueryExpander()
-    hyde_generator = HyDEGenerator(llm=llm)
-    dense_searcher = DenseSearchEngine()
-    sparse_searcher = SparseSearchEngine()
-    result_merger = ResultMerger()
-    reranker = CrossEncoderReranker()
-    context_assembler = ContextAssembler()
+    searcher = InMeiliSearch()
+    reranker = Reranker()
     answer_generator = AnswerGenerator(llm=llm)
-    context_manager = ContextManager(llm=llm)
 
     condense_question_node = CondenseQuestionNode(query_condenser)
     decompose_query_node = DecomposeQueryNode(entity_extractor)
-    retrieve_and_rank_node = RetrieveAndRankNode(
-        hyde_generator, query_expander, dense_searcher, 
-        sparse_searcher, result_merger, reranker, context_assembler
-    )
-    critique_context_node = CritiqueContextNode(context_manager)
+    retrieve_and_rank_node = RetrieveAndRankNode(query_expander, searcher, reranker)
     generate_answer_node = GenerateAnswerNode(answer_generator)
     handle_error_node = HandleErrorNode()
 
@@ -43,7 +32,6 @@ def build_medical_rag_agent() -> MedicalRAGAgent:
         condense_question_node=condense_question_node,
         decompose_query_node=decompose_query_node,
         retrieve_and_rank_node=retrieve_and_rank_node,
-        critique_context_node=critique_context_node,
         generate_answer_node=generate_answer_node,
         handle_error_node=handle_error_node,
     )

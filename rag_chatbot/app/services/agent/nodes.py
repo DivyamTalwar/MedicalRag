@@ -6,17 +6,13 @@ from .state import AgentState
 from rag_chatbot.app.models.data_models import Document
 from rag_chatbot.app.services.query_engine.transformation import (
     QueryCondenser, 
-    MedicalQueryExpander, 
-    HyDEGenerator
+    MedicalQueryExpander
 )
 from rag_chatbot.app.services.query_engine.search import (
-    DenseSearchEngine, 
-    SparseSearchEngine, 
-    ResultMerger, 
-    CrossEncoderReranker
+    InMeiliSearch,
+    Reranker
 )
 from rag_chatbot.app.services.query_engine.generation import AnswerGenerator
-from rag_chatbot.app.services.query_engine.context import ContextAssembler, ContextManager
 from rag_chatbot.app.core.extractor import MedicalEntityExtractor
 
 class CondenseQuestionNode:
@@ -69,77 +65,34 @@ class DecomposeQueryNode:
         }
 
 class RetrieveAndRankNode:
-    def __init__(self, hyde_generator: HyDEGenerator, query_expander: MedicalQueryExpander, 
-                dense_searcher: DenseSearchEngine, sparse_searcher: SparseSearchEngine, 
-                result_merger: ResultMerger, reranker: CrossEncoderReranker, 
-                context_assembler: ContextAssembler):
-        self.hyde_generator = hyde_generator
+    def __init__(self, query_expander: MedicalQueryExpander, searcher: InMeiliSearch, reranker: Reranker):
         self.query_expander = query_expander
-        self.dense_searcher = dense_searcher
-        self.sparse_searcher = sparse_searcher
-        self.result_merger = result_merger
+        self.searcher = searcher
         self.reranker = reranker
-        self.context_assembler = context_assembler
 
     def run(self, state: AgentState) -> dict:
         start_time = time.time()
         query = state["query_state"]["condensed_query"]
 
-        hypothetical_doc = self.hyde_generator.generate(query)
         expanded_terms = self.query_expander.expand(query)
-        dense_results = self.dense_searcher.search(hypothetical_doc, top_k=20)
-        sparse_results = self.sparse_searcher.search(expanded_terms, top_k=10)
-        merged_results = self.result_merger.merge(dense_results, sparse_results)
-        reranked_chunks_dicts = self.reranker.rerank(query, merged_results, top_k=8)
-
-        reranked_chunks = [
-            Document(
-                id=chunk.get('id', chunk.get('_id')),
-                text=chunk.get('text', ''),
-                metadata=chunk.get('metadata', {})
-            )
-            for chunk in reranked_chunks_dicts
-        ]
         
-        parent_chunks, assembled_context = self.context_assembler.assemble(reranked_chunks)
+        # 1. Initial Keyword Search
+        initial_results = self.searcher.search(expanded_terms, top_k=30)
+        
+        # 2. Rerank the results for relevance
+        reranked_results = self.reranker.rerank(query, initial_results, top_k=8)
+        
+        # 3. Assemble the final context
+        assembled_context = "\n\n".join([doc.text for doc in reranked_results])
         
         processing_time = time.time() - start_time
 
-        updated_search_state = state["search_state"].copy()
-        updated_search_state["reranked_chunks"] = reranked_chunks_dicts
-
-        updated_context_state = state["context_state"].copy()
-        updated_context_state["parent_chunks"] = parent_chunks
-        updated_context_state["assembled_context"] = assembled_context
-        
         return {
-            "search_state": updated_search_state,
-            "context_state": updated_context_state,
+            "context_state": {
+                "parent_chunks": reranked_results,
+                "assembled_context": assembled_context,
+            },
             "performance_state": {"node_timings": {"retrieve_and_rank": processing_time}}
-        }
-
-class CritiqueContextNode:
-    def __init__(self, context_manager: ContextManager):
-        self.context_manager = context_manager
-
-    def run(self, state: AgentState) -> Dict[str, Any]:
-        start_time = time.time()
-        
-        query = state["query_state"]["condensed_query"]
-        context = state["context_state"]["parent_chunks"]
-        
-        is_sufficient = self.context_manager.evaluate_sufficiency(query, context)
-        
-        processing_time = time.time() - start_time
-        
-        updated_context_state = state["context_state"].copy()
-        updated_context_state["context_sufficiency"] = is_sufficient
-        
-        return {
-            "context_state": updated_context_state,
-            "performance_state": {
-                "node_timings": {"critique_context": processing_time}
-            }
         }
 
 class GenerateAnswerNode:
@@ -152,16 +105,25 @@ class GenerateAnswerNode:
         context = state["context_state"]["parent_chunks"]
         is_streaming = state["generation_state"].get("is_streaming", False)
 
-        answer = self.answer_generator.generate(query, context)
-        rich_citations = self._create_rich_citations(answer, context)
+        # Safety check for empty context
+        if not context:
+            return {
+                "generation_state": {
+                    "final_answer": "I could not find any relevant information in the documents to answer your question.",
+                    "rich_citations": [],
+                }
+            }
+
+        raw_answer, final_answer = self.answer_generator.generate(query, context)
+        rich_citations = self._create_rich_citations(raw_answer, context)
         
         response_payload = {
-            "final_answer": answer,
+            "final_answer": final_answer,
             "rich_citations": rich_citations,
         }
 
         if is_streaming:
-            response_payload["streaming_response"] = self._create_streaming_generator(answer, rich_citations)
+            response_payload["streaming_response"] = self._create_streaming_generator(final_answer, rich_citations)
 
         processing_time = time.time() - start_time
         updated_generation_state = state["generation_state"].copy()
