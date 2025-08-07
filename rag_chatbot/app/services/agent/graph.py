@@ -49,7 +49,7 @@ class MedicalRAGAgent:
             self._route_context_decision,
             {
                 "sufficient": "generate_answer",
-                "insufficient": "generate_answer",
+                "insufficient": "retrieve_and_rank",
             }
         )
         
