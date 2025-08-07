@@ -1,5 +1,8 @@
 import sys
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
@@ -8,40 +11,28 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 
 from rag_chatbot.app.services.agent.builder import build_medical_rag_agent
 from rag_chatbot.app.services.agent.state import AgentState
 
 app = FastAPI(title="Medical RAG Chatbot", version="4.0.0")
 
+conversation_history: List[BaseMessage] = []
+
 agent = build_medical_rag_agent()
 
 class ChatRequest(BaseModel):
     question: str
-    chat_history: Optional[List[Dict[str, str]]] = []
-    stream: Optional[bool] = False
 
-class ChatResponse(BaseModel):
-    answer: str
-    citations: List[Dict[str, Any]]
-    metadata: Dict[str, Any]
-
-@app.post("/chat", response_model=ChatResponse)
+@app.post("/chat")
 async def chat_endpoint(request: ChatRequest):
     try:
-        chat_history = []
-        for msg in request.chat_history:
-            if msg["role"] == "user":
-                chat_history.append(HumanMessage(content=msg["content"]))
-            elif msg["role"] == "assistant":
-                chat_history.append(AIMessage(content=msg["content"]))
-        
         initial_state = {
             "query_state": {
                 "original_query": request.question,
                 "condensed_query": "",
-                "chat_history": chat_history,
+                "chat_history": conversation_history,
                 "medical_entities": {}
             },
             "search_state": {
@@ -59,7 +50,7 @@ async def chat_endpoint(request: ChatRequest):
             "generation_state": {
                 "final_answer": "",
                 "rich_citations": [],
-                "is_streaming": request.stream,
+                "is_streaming": True,
             },
             "performance_state": {
                 "node_timings": {},
@@ -68,30 +59,28 @@ async def chat_endpoint(request: ChatRequest):
             "error_state": {
                 "error_message": None,
                 "failed_node": None
-            },
-            "conversation_history": []
+            }
         }
         
         result = agent.run(initial_state)
         
-        if request.stream:
-            return StreamingResponse(
-                result["generation_state"]["streaming_response"],
-                media_type="text/event-stream"
-            )
+        # Update conversation history
+        conversation_history.append(HumanMessage(content=request.question))
+        final_answer = result.get("generation_state", {}).get("final_answer", "")
+        if final_answer:
+            conversation_history.append(AIMessage(content=final_answer))
+
+        streaming_response = result.get("generation_state", {}).get("streaming_response")
         
-        final_answer = result["generation_state"]["final_answer"]
-        citations = result["generation_state"]["rich_citations"]
-        
-        metadata = {
-            "processing_time": result["performance_state"].get("total_duration", 0),
-            "performance_metrics": result["performance_state"].get("node_timings", {})
-        }
-        
-        return ChatResponse(
-            answer=final_answer,
-            citations=citations,
-            metadata=metadata
+        if not streaming_response:
+            # Fallback for non-streaming results
+            async def string_generator(text):
+                yield text
+            return StreamingResponse(string_generator(final_answer), media_type="text/plain")
+
+        return StreamingResponse(
+            streaming_response,
+            media_type="text/event-stream"
         )
         
     except Exception as e:

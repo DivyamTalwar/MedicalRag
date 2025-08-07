@@ -29,14 +29,18 @@ class CondenseQuestionNode:
         query = state["query_state"]["original_query"]
         chat_history = state["query_state"]["chat_history"]
         
-        condensed_query = self.query_condenser.condense(query, chat_history)
+        if not chat_history:
+            condensed_query = query
+        else:
+            condensed_query = self.query_condenser.condense(query, chat_history)
         
         processing_time = time.time() - start_time
         
+        updated_query_state = state["query_state"].copy()
+        updated_query_state["condensed_query"] = condensed_query
+        
         return {
-            "query_state": {
-                "condensed_query": condensed_query,
-            },
+            "query_state": updated_query_state,
             "performance_state": {
                 "node_timings": {"condense_question": processing_time}
             }
@@ -54,10 +58,11 @@ class DecomposeQueryNode:
         
         processing_time = time.time() - start_time
         
+        updated_query_state = state["query_state"].copy()
+        updated_query_state["medical_entities"] = medical_entities
+        
         return {
-            "query_state": {
-                "medical_entities": medical_entities
-            },
+            "query_state": updated_query_state,
             "performance_state": {
                 "node_timings": {"decompose_query": processing_time}
             }
@@ -90,12 +95,16 @@ class RetrieveAndRankNode:
         
         processing_time = time.time() - start_time
 
+        updated_search_state = state["search_state"].copy()
+        updated_search_state["reranked_chunks"] = reranked_chunks
+
+        updated_context_state = state["context_state"].copy()
+        updated_context_state["parent_chunks"] = parent_chunks
+        updated_context_state["assembled_context"] = assembled_context
+        
         return {
-            "search_state": {"reranked_chunks": reranked_chunks},
-            "context_state": {
-                "parent_chunks": parent_chunks,
-                "assembled_context": assembled_context
-            },
+            "search_state": updated_search_state,
+            "context_state": updated_context_state,
             "performance_state": {"node_timings": {"retrieve_and_rank": processing_time}}
         }
 
@@ -113,10 +122,11 @@ class CritiqueContextNode:
         
         processing_time = time.time() - start_time
         
+        updated_context_state = state["context_state"].copy()
+        updated_context_state["context_sufficiency"] = is_sufficient
+        
         return {
-            "context_state": {
-                "context_sufficiency": is_sufficient,
-            },
+            "context_state": updated_context_state,
             "performance_state": {
                 "node_timings": {"critique_context": processing_time}
             }
@@ -144,8 +154,11 @@ class GenerateAnswerNode:
             response_payload["streaming_response"] = self._create_streaming_generator(answer, rich_citations)
 
         processing_time = time.time() - start_time
+        updated_generation_state = state["generation_state"].copy()
+        updated_generation_state.update(response_payload)
+
         return {
-            "generation_state": response_payload,
+            "generation_state": updated_generation_state,
             "performance_state": {"node_timings": {"generate_answer": processing_time}}
         }
 

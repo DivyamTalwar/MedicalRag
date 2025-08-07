@@ -1,6 +1,6 @@
 import re
 from typing import List, Dict, Any
-from app.core.llm import CustomLLM
+from rag_chatbot.app.core.llm import CustomLLM
 
 class CitationManager:
     def __init__(self, context_chunks: List[Dict]):

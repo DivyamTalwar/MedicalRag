@@ -5,11 +5,14 @@ from typing import List, Dict, Any
 from pinecone import Pinecone
 from pymongo import MongoClient
 from bson.codec_options import CodecOptions, UuidRepresentation
-from app.core.embeddings import CustomEmbedding
+from rag_chatbot.app.core.embeddings import CustomEmbedding
 
 class DenseSearchEngine:
     def __init__(self, index_name: str = "children"):
-        self.embeddings = CustomEmbedding()
+        self.embeddings = CustomEmbedding(
+            api_url=os.getenv("EMBEDDING_API_URL"),
+            api_key=os.getenv("MODELS_API_KEY")
+        )
         self.pinecone_client = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
         self.index = self.pinecone_client.Index(index_name)
         self.index_name = index_name

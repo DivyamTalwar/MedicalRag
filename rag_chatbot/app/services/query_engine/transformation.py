@@ -1,8 +1,8 @@
 import os
 from typing import List, Dict, Any
 from llama_index.core.base.llms.types import ChatMessage
-from app.core.llm import CustomLLM
-from app.core.extractor import MedicalEntityExtractor
+from rag_chatbot.app.core.llm import CustomLLM
+from rag_chatbot.app.core.extractor import MedicalEntityExtractor
 
 class QueryCondenser:
     def __init__(self, llm: CustomLLM):

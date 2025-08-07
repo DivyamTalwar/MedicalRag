@@ -73,46 +73,26 @@ class ContextManager:
         if not context:
             return False
         
-        relevance_score = self._calculate_semantic_relevance(query, context)
-        coverage_score = self._calculate_query_coverage(query, context)
+        context_text = "\n\n".join([doc.text for doc in context])
         
-        final_score = (relevance_score * 0.5) + (coverage_score * 0.5)
+        prompt = f"""
+        Given the following query and context, evaluate if the context contains sufficient information to provide a comprehensive and accurate answer.
         
-        logging.info(f"Context critique scores - Relevance: {relevance_score:.2f}, "
-                    f"Coverage: {coverage_score:.2f}, Final: {final_score:.2f}")
+        Query: {query}
         
-        return final_score >= 0.5
-
-    def _calculate_semantic_relevance(self, query: str, context: List[Document]) -> float:
-        if not context:
-            return 0.0
+        Context:
+        ---
+        {context_text}
+        ---
         
-        query_words = set(query.lower().split())
-        total_relevance = 0.0
+        Is the context sufficient? Please answer with only "yes" or "no".
+        """
         
-        for doc in context:
-            doc_words = set(doc.text.lower().split())
-            overlap = len(query_words.intersection(doc_words))
-            relevance = overlap / len(query_words) if query_words else 0
-            total_relevance += relevance
-        
-        return min(total_relevance / len(context), 1.0) if context else 0.0
-
-    def _calculate_query_coverage(self, query: str, context: List[Document]) -> float:
-        key_concepts = self._extract_key_concepts(query)
-        if not key_concepts:
-            return 0.5
-        
-        context_text = " ".join([doc.text.lower() for doc in context])
-        covered_concepts = sum(1 for concept in key_concepts if concept in context_text)
-        
-        return covered_concepts / len(key_concepts) if key_concepts else 0.0
-
-    def _extract_key_concepts(self, query: str) -> List[str]:
-        medical_keywords = [
-            "pain", "treatment", "diagnosis", "symptoms", "medication", "procedure",
-            "test", "scan", "therapy", "surgery", "condition", "disease", "infection"
-        ]
-        
-        query_lower = query.lower()
-        return [keyword for keyword in medical_keywords if keyword in query_lower]
+        try:
+            response = self.llm.invoke(prompt)
+            decision = response.strip().lower()
+            logging.info(f"Context sufficiency evaluation: LLM responded with '{decision}'")
+            return "yes" in decision
+        except Exception as e:
+            logging.error(f"Error during LLM-based context sufficiency evaluation: {e}")
+            return False
