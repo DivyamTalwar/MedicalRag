@@ -6,19 +6,19 @@ class CitationManager:
     def __init__(self, context_chunks: List[Dict]):
         self.context_chunks = context_chunks
         self.citation_map = {
-            i + 1: chunk['metadata'] for i, chunk in enumerate(context_chunks)
+            i + 1: chunk.metadata for i, chunk in enumerate(context_chunks)
         }
 
     def get_formatted_sources(self) -> str:
         formatted_sources = []
         for i, chunk in enumerate(self.context_chunks):
-            metadata = chunk.get('metadata', {})
+            metadata = chunk.metadata
             source_str = (
                 f"Source [{i+1}]:\n"
                 f"Document: {metadata.get('pdf_name', 'N/A')}\n"
                 f"Page: {metadata.get('page_no', 'N/A')}\n"
                 f"Section: {metadata.get('section_title', 'N/A')}\n"
-                f"Content: {chunk.get('text', '')}\n"
+                f"Content: {chunk.text}\n"
             )
             formatted_sources.append(source_str)
         return "\n---\n".join(formatted_sources)
@@ -38,31 +38,6 @@ class CitationManager:
             return match.group(0)
 
         return re.sub(r'\[(\d+)\]', replace_func, response_text)
-
-class MedicalResponseValidator:
-    def validate(self, response: str, citations_present: bool) -> bool:
-        disclaimer = "this information is for informational purposes only"
-        if disclaimer not in response.lower():
-            return False
-        
-        if not citations_present and len(response.split()) > 20:
-            return False
-
-        diagnostic_phrases = ["you have", "you are suffering from", "the diagnosis is"]
-        if any(phrase in response.lower() for phrase in diagnostic_phrases):
-            return False
-
-        hallucination_phrases = [
-            "i think", "i believe", "probably", "it seems like",
-            "based on my knowledge", "in general"
-        ]
-        if any(phrase in response.lower() for phrase in hallucination_phrases):
-            return False
-            
-        if len(response.split()) > 50 and "[source:" not in response.lower():
-            return False
-            
-        return True
 
 class AnswerGenerator:
     def __init__(self, llm: CustomLLM):
@@ -98,15 +73,6 @@ class AnswerGenerator:
         )
 
         raw_response = self.llm.complete(prompt).text
-
-        validator = MedicalResponseValidator()
-        citations_found = bool(re.search(r'\[\d+\]', raw_response))
-        
-        if not validator.validate(raw_response, citations_found):
-            return (
-                "I could not generate a valid response based on the provided documents. "
-                "Please try rephrasing your question."
-            )
 
         final_response = citation_manager.format_citations(raw_response)
 

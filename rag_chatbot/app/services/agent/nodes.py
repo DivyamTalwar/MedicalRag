@@ -90,13 +90,23 @@ class RetrieveAndRankNode:
         dense_results = self.dense_searcher.search(hypothetical_doc, top_k=20)
         sparse_results = self.sparse_searcher.search(expanded_terms, top_k=10)
         merged_results = self.result_merger.merge(dense_results, sparse_results)
-        reranked_chunks = self.reranker.rerank(query, merged_results, top_k=8)
+        reranked_chunks_dicts = self.reranker.rerank(query, merged_results, top_k=8)
+
+        reranked_chunks = [
+            Document(
+                id=chunk.get('id', chunk.get('_id')),
+                text=chunk.get('text', ''),
+                metadata=chunk.get('metadata', {})
+            )
+            for chunk in reranked_chunks_dicts
+        ]
+        
         parent_chunks, assembled_context = self.context_assembler.assemble(reranked_chunks)
         
         processing_time = time.time() - start_time
 
         updated_search_state = state["search_state"].copy()
-        updated_search_state["reranked_chunks"] = reranked_chunks
+        updated_search_state["reranked_chunks"] = reranked_chunks_dicts
 
         updated_context_state = state["context_state"].copy()
         updated_context_state["parent_chunks"] = parent_chunks

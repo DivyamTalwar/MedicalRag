@@ -64,7 +64,6 @@ async def chat_endpoint(request: ChatRequest):
         
         result = agent.run(initial_state)
         
-        # Update conversation history
         conversation_history.append(HumanMessage(content=request.question))
         final_answer = result.get("generation_state", {}).get("final_answer", "")
         if final_answer:

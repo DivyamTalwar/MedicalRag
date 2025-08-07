@@ -73,26 +73,25 @@ class ContextManager:
         if not context:
             return False
         
+        if len(context) > 5:
+            logging.info("Context deemed sufficient due to chunk count.")
+            return True
+
         context_text = "\n\n".join([doc.text for doc in context])
         
         prompt = f"""
-        Given the following query and context, evaluate if the context contains sufficient information to provide a comprehensive and accurate answer.
-        
+        Given the query and context below, is there enough information in the context to answer the query?
+        Respond with only "yes" or "no".
+
         Query: {query}
-        
-        Context:
-        ---
-        {context_text}
-        ---
-        
-        Is the context sufficient? Please answer with only "yes" or "no".
+        Context: {context_text}
         """
         
         try:
-            response = self.llm.invoke(prompt)
-            decision = response.strip().lower()
-            logging.info(f"Context sufficiency evaluation: LLM responded with '{decision}'")
-            return "yes" in decision
+            response = self.llm.complete(prompt).text.strip().lower()
+            logging.info(f"Context sufficiency evaluation: LLM responded with '{response}'")
+            return "yes" in response or "no" not in response
         except Exception as e:
-            logging.error(f"Error during LLM-based context sufficiency evaluation: {e}")
-            return False
+            logging.error(f"Error during context sufficiency evaluation: {e}")
+            # Default to sufficient to prevent recursion loops
+            return True

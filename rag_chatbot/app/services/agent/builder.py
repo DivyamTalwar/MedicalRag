@@ -12,27 +12,23 @@ from rag_chatbot.app.services.query_engine.search import DenseSearchEngine, Spar
 from rag_chatbot.app.services.query_engine.generation import AnswerGenerator
 from rag_chatbot.app.services.query_engine.context import ContextAssembler, ContextManager
 from rag_chatbot.app.core.llm import CustomLLM
-from rag_chatbot.app.core.embeddings import get_embedding_model
 from rag_chatbot.app.core.extractor import MedicalEntityExtractor
 
 def build_medical_rag_agent() -> MedicalRAGAgent:
     llm = CustomLLM()
-    embeddings = get_embedding_model()
     
-    # Instantiate components directly
-    query_condenser = QueryCondenser(llm)
+    query_condenser = QueryCondenser(llm=llm)
     entity_extractor = MedicalEntityExtractor()
     query_expander = MedicalQueryExpander()
-    hyde_generator = HyDEGenerator(llm)
+    hyde_generator = HyDEGenerator(llm=llm)
     dense_searcher = DenseSearchEngine()
     sparse_searcher = SparseSearchEngine()
     result_merger = ResultMerger()
     reranker = CrossEncoderReranker()
     context_assembler = ContextAssembler()
-    answer_generator = AnswerGenerator(llm)
-    context_manager = ContextManager(llm)
+    answer_generator = AnswerGenerator(llm=llm)
+    context_manager = ContextManager(llm=llm)
 
-    # Build nodes with correct dependencies
     condense_question_node = CondenseQuestionNode(query_condenser)
     decompose_query_node = DecomposeQueryNode(entity_extractor)
     retrieve_and_rank_node = RetrieveAndRankNode(

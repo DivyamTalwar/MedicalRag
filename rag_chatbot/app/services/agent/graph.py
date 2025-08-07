@@ -42,17 +42,7 @@ class MedicalRAGAgent:
         self.workflow.set_entry_point("condense_question")
         self.workflow.add_edge("condense_question", "decompose_query")
         self.workflow.add_edge("decompose_query", "retrieve_and_rank")
-        self.workflow.add_edge("retrieve_and_rank", "critique_context")
-        
-        self.workflow.add_conditional_edges(
-            "critique_context",
-            self._route_context_decision,
-            {
-                "sufficient": "generate_answer",
-                "insufficient": "retrieve_and_rank",
-            }
-        )
-        
+        self.workflow.add_edge("retrieve_and_rank", "generate_answer")
         self.workflow.add_edge("generate_answer", END)
         self.workflow.add_edge("handle_error", END)
 
@@ -65,7 +55,7 @@ class MedicalRAGAgent:
     def run(self, inputs: dict):
         start_time = time.time()
         
-        result = self.graph.invoke(inputs, {"recursion_limit": 10})
+        result = self.graph.invoke(inputs, {"recursion_limit": 15})
         
         end_time = time.time()
         

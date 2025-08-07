@@ -23,22 +23,25 @@ class CustomLLM(LLM):
             "model_name": self.model,
             "max_tokens": self.max_tokens,
             "temperature": self.temperature,
-            "deep_thinking": self.deep_thinking,
         }
 
     def _get_headers(self) -> Dict[str, str]:
+        api_key = os.getenv("MODELS_API_KEY")
+        if not api_key:
+            raise ValueError("API key not found. Make sure to set MODELS_API_KEY in your .env file")
         return {
-            "Authorization": f"Bearer {os.getenv('MODELS_API_KEY')}",
+            "x-api-key": api_key,
             "Content-Type": "application/json",
         }
 
     def _base_payload(self, messages: Sequence[ChatMessage], stream: bool) -> Dict[str, Any]:
+        message_dicts = [{"role": msg.role.value, "content": msg.content} for msg in messages]
+
         return {
             "model": self.model,
-            "messages": [msg.dict() for msg in messages],
+            "messages": message_dicts,
             "max_tokens": self.max_tokens,
             "temperature": self.temperature,
-            "deep_thinking": self.deep_thinking,
             "stream": stream,
         }
 
@@ -57,7 +60,8 @@ class CustomLLM(LLM):
     def chat(self, messages: Sequence[ChatMessage], **kwargs: Any) -> ChatResponse:
         payload = self._base_payload(messages, stream=False)
         data = self._sync_request(payload)
-        content = data["choices"][0]["message"]["content"]
+        choice = data.get("choices", [{}])[0]
+        content = choice.get("message", {}).get("content", "")
         return ChatResponse(message=ChatMessage(role="assistant", content=content))
 
     def stream_chat(
@@ -82,11 +86,10 @@ class CustomLLM(LLM):
                         break
                     try:
                         piece = json.loads(chunk)
-                        delta = (
-                            piece.get("choices", [{}])[0]
-                            .get("delta", {})
-                            .get("content", "")
-                        )
+                        choices = piece.get("choices")
+                        if not choices:
+                            continue
+                        delta = choices[0].get("delta", {}).get("content", "")
                         yield ChatResponse(
                             message=ChatMessage(role="assistant", content=""), delta=delta
                         )
@@ -100,7 +103,8 @@ class CustomLLM(LLM):
     ) -> ChatResponse:
         payload = self._base_payload(messages, stream=False)
         data = await self._async_request(payload)
-        content = data["choices"][0]["message"]["content"]
+        choice = data.get("choices", [{}])[0]
+        content = choice.get("message", {}).get("content", "")
         return ChatResponse(message=ChatMessage(role="assistant", content=content))
 
     async def astream_chat(
@@ -125,11 +129,10 @@ class CustomLLM(LLM):
                         break
                     try:
                         piece = json.loads(chunk)
-                        delta = (
-                            piece.get("choices", [{}])[0]
-                            .get("delta", {})
-                            .get("content", "")
-                        )
+                        choices = piece.get("choices")
+                        if not choices:
+                            continue
+                        delta = choices[0].get("delta", {}).get("content", "")
                         yield ChatResponse(
                             message=ChatMessage(role="assistant", content=""), delta=delta
                         )
