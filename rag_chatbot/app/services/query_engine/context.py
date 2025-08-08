@@ -423,6 +423,9 @@ class MedicalContextAssembler:
             logging.info(f"Final assembled context: {len(sorted_chunks)} chunks, {total_entities} medical entities")
             
             return sorted_chunks, assembled_context
+        except Exception as e:
+            logging.error(f"Context assembly failed: {e}")
+            return [], "Context assembly failed due to technical error."
             
         except Exception as e:
             logging.error(f"Context assembly failed: {e}")

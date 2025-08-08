@@ -27,16 +27,16 @@ def generate_questions_from_metadata(file_path: str, num_questions: int = 10) ->
         return []
 
     questions = [
-        "What are the specific features of CIVIE's CRM portal that help marketers track engagement and referral growth?",
-        "Provide a detailed explanation of each step in CIVIE's 5-step order journey, including the technologies used at each stage.",
-        "What are the key differences between the 'Standard' and 'Table' parsing modes in LlamaParse, and how do they impact the quality of extracted data?",
-        "How does the RIS Insight AI System use follow-up appointments to prevent patient leakage, and what is the average patient leakage rate across the industry?",
-        "What are the technical specifications of the walk-in kiosk for patient self-scheduling, and how does it reduce operational costs?",
-        "Describe the architecture of CIVIE's in-house call center application, including its scripting capabilities and integration with the scheduling system.",
-        "What is the statistical correlation between the 68% of patients who click the self-scheduling link and the 25% reduction in call center volume?",
-        "Explain the data-driven algorithms used by CIVIE's intelligent scheduling system to optimize resource utilization, and quantify the 35% improvement in contrast scheduling.",
-        "What is the full context of Dr. Krishna Das's testimonial, and how does the 30% cost reduction figure relate to the other metrics mentioned?",
-        "Who are the key members of CIVIE's executive team, and what are their roles and responsibilities?",
+        "What specific DICOM standards and protocols does CIVIE support, and how does the system handle medical imaging data transmission?",
+        "How does CIVIE integrate with existing hospital information systems (HIS) and electronic health records (EHR)?",
+        "What automated billing features are included in CIVIE's revenue cycle management, and how does the system handle insurance authorizations?",
+        "What are the specific payment processing capabilities and how does the system handle patient collections?",
+        "What artificial intelligence capabilities are built into CIVIE for image analysis and workflow optimization?",
+        "How does the system use predictive analytics for scheduling and resource management?",
+        "What HIPAA compliance features and security measures are implemented throughout the CIVIE platform?",
+        "What audit trails and reporting capabilities exist for tracking system usage and patient data access?",
+        "How does the system handle multi-location imaging facilities and what are the networking requirements?",
+        "What automated quality assurance checks are performed on imaging studies, and how are critical findings flagged?",
     ]
     
     random.seed(42)
