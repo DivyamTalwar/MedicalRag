@@ -17,30 +17,31 @@ app = FastAPI(title="Medical RAG Chatbot", version="5.0.0")
 
 agent = SimpleRAGFlow()
 
+chat_history_store: List[Dict[str, Any]] = []
+
 class ChatRequest(BaseModel):
     question: str
-    chat_history: List[Dict[str, Any]] = []
 
 class ChatResponse(BaseModel):
     final_answer: str
-    chat_history: List[Dict[str, Any]]
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
+    global chat_history_store
     try:
-        conversation_history = messages_from_dict(request.chat_history)
+        conversation_history = messages_from_dict(chat_history_store)
         
-        final_answer = await agent.run(request.question)
+        final_answer = await agent.run(request.question, chat_history=conversation_history)
         
         # Update conversation history
         updated_history = conversation_history + [
             HumanMessage(content=request.question),
             AIMessage(content=final_answer)
         ]
+        chat_history_store = [message_to_dict(msg) for msg in updated_history]
         
         return ChatResponse(
-            final_answer=final_answer,
-            chat_history=[message_to_dict(msg) for msg in updated_history]
+            final_answer=final_answer
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing request: {str(e)}")

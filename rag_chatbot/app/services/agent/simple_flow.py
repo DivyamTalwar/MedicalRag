@@ -18,7 +18,7 @@ class SimpleRAGFlow:
         self.context_assembler = MedicalContextAssembler()
         self.answer_generator = AnswerGenerator(self.llm)
 
-    async def simple_subquery_process(self, query: str, max_retries: int = 3) -> SubQueryResponse:
+    async def simple_subquery_process(self, query: str, chat_history: List = [], max_retries: int = 3) -> SubQueryResponse:
         for attempt in range(max_retries):
             try:
                 logging.info(f"Processing subquery (attempt {attempt + 1}/{max_retries}): {query}")
@@ -30,10 +30,10 @@ class SimpleRAGFlow:
                     raise ValueError("Context assembly failed")
 
                 response_prompt = f"Query: {query}\nContext: {context}"
-                response = self.answer_generator.generate(response_prompt, "")
+                response = self.answer_generator.generate(response_prompt, chat_history)
                 
                 summary_prompt = f"Summarize key facts: {context}"
-                summary = self.answer_generator.generate(summary_prompt, "")
+                summary = self.answer_generator.generate(summary_prompt, chat_history)
                 
                 return SubQueryResponse(
                     subquery_response=response,
@@ -52,7 +52,7 @@ class SimpleRAGFlow:
             summary="No data available for this query."
         )
 
-    async def synthesize_final_answer(self, question: str, subquery1: str, response1: SubQueryResponse, subquery2: str, response2: SubQueryResponse, max_retries: int = 3) -> str:
+    async def synthesize_final_answer(self, question: str, subquery1: str, response1: SubQueryResponse, subquery2: str, response2: SubQueryResponse, chat_history: List = [], max_retries: int = 3) -> str:
         synthesis_context = (
             f"Subquery 1: {subquery1}\nResponse 1: {response1.subquery_response}\nSummary 1: {response1.summary}\n\n"
             f"Subquery 2: {subquery2}\nResponse 2: {response2.subquery_response}\nSummary 2: {response2.summary}"
@@ -70,7 +70,7 @@ class SimpleRAGFlow:
         
         for attempt in range(max_retries):
             try:
-                response = self.answer_generator.generate(synthesis_prompt, "")
+                response = self.answer_generator.generate(synthesis_prompt, chat_history)
                 if len(response) > 20 and not response.endswith("..."):
                     return response
             except Exception as e:
@@ -79,12 +79,12 @@ class SimpleRAGFlow:
         
         return get_fallback_response(question, "synthesis")
 
-    async def run(self, question: str) -> str:
-        subqueries = await self.sub_query_generator.generate(question)
+    async def run(self, question: str, chat_history: List = []) -> str:
+        subqueries = await self.sub_query_generator.generate(question, chat_history)
         
         tasks = [
-            self.simple_subquery_process(subqueries.query1),
-            self.simple_subquery_process(subqueries.query2)
+            self.simple_subquery_process(subqueries.query1, chat_history),
+            self.simple_subquery_process(subqueries.query2, chat_history)
         ]
         responses = await asyncio.gather(*tasks)
         
@@ -93,7 +93,8 @@ class SimpleRAGFlow:
             subquery1=subqueries.query1,
             response1=responses[0],
             subquery2=subqueries.query2, 
-            response2=responses[1]
+            response2=responses[1],
+            chat_history=chat_history
         )
         
         return final_response

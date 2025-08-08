@@ -60,11 +60,11 @@ class QueryCondenser:
 
         try:
             history_str = "\n".join(
-                [f"{msg.role.capitalize()}: {msg.content}" for msg in chat_history]
+                [f"{msg.type.capitalize()}: {msg.content}" for msg in chat_history]
             )
             
             prompt = self._template.format(chat_history=history_str, question=question)
-            response = self.llm.invoke(prompt).content.strip()
+            response = self.llm.invoke(prompt)['content'].strip()
             
             # Preserve critical medical context
             response = self._preserve_medical_context(question, response)
@@ -80,6 +80,7 @@ from rag_chatbot.app.models.agent_models import SubQueryGeneration
 class SubQueryGenerator:
     def __init__(self, llm: CustomLLM):
         self.llm = llm
+        self.query_condenser = QueryCondenser(llm)
 
     def _create_subquery_prompt(self, question: str) -> str:
         return f"""
@@ -104,6 +105,8 @@ Your JSON Response:
 
     def _extract_llm_content(self, response) -> str:
         try:
+            if isinstance(response, dict) and 'content' in response:
+                return response['content'].strip()
             if hasattr(response, 'choices'):
                 content = response.choices[0].message.content
             elif hasattr(response, 'content'):
@@ -139,8 +142,11 @@ Your JSON Response:
             "query2": f"How does the process work for {text[:50]}?"
         }
 
-    async def generate(self, question: str) -> SubQueryGeneration:
+    async def generate(self, question: str, chat_history: List = []) -> SubQueryGeneration:
         """Absolutely bulletproof subquery generation"""
+        if chat_history:
+            question = self.query_condenser.condense(question, chat_history)
+
         content = ""
         # Attempt 1: Structured LLM call
         try:

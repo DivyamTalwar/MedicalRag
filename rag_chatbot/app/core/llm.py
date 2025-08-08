@@ -1,24 +1,30 @@
-import os
-from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
+import requests
+import json
+from . import config
 
-load_dotenv()
+class OmegaLLM:
+    def __init__(self):
+        self.endpoint = config.LLM_ENDPOINT
+        self.api_key = config.MODELS_API_KEY
+        self.model = "omega"
 
-def get_llm():
-    api_key = os.getenv("MODELS_API_KEY")
-    llm_endpoint = "https://api.us.inc/omega/civie/v1"
+    def invoke(self, prompt: str):
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+        data = {
+            "model": self.model,
+            "messages": [
+                {"role": "user", "content": prompt}
+            ]
+        }
+        response = requests.post(self.endpoint, headers=headers, json=data, timeout=600)
+        response.raise_for_status()
+        result = response.json()
+        if "choices" in result and len(result["choices"]) > 0 and "message" in result["choices"][0] and "content" in result["choices"][0]["message"]:
+            return {"content": result["choices"][0]["message"]["content"]}
+        else:
+            raise ValueError("Unexpected response format from LLM API")
 
-    if not api_key or not llm_endpoint:
-        raise ValueError("API key or endpoint not found. Make sure to set MODELS_API_KEY and LLM_ENDPOINT in your .env file")
-
-    return ChatOpenAI(
-        model="omega",
-        api_key=api_key,
-        base_url=llm_endpoint,
-        temperature=0.2,
-        max_tokens=8192,
-        max_retries=5,
-        request_timeout=600,
-    )
-
-CustomLLM = get_llm
+CustomLLM = OmegaLLM
