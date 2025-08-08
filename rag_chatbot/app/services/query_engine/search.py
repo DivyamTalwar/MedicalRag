@@ -12,57 +12,6 @@ import pinecone
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-class MedicalQueryClassifier:
-    """Classify medical queries to determine optimal retrieval strategy"""
-    
-    def __init__(self):
-        self.query_patterns = {
-            'lab_results': [
-                r'\b(lab|test|result|value|level|count|analysis)\b',
-                r'\b(glucose|cholesterol|hemoglobin|hba1c|tsh|hdl|ldl)\b',
-                r'\b(blood|urine|serum|plasma)\b',
-                r'\d+\.\d+\s*(?:mg/dL|mmHg|mEq/L|IU/mL|AU/mL|U/mL|%)',
-                r'\b(normal|abnormal|high|low|elevated)\b'
-            ],
-            'procedures': [
-                r'\b(procedure|scan|exam|study|imaging|radiology)\b',
-                r'\b(ct|mri|xray|ultrasound|pacs|ris)\b',
-                r'\b(workflow|turnaround|time|tat|scheduling)\b',
-                r'\b(dicom|worklist|technologist|radiologist)\b'
-            ],
-            'symptoms': [
-                r'\b(symptom|pain|ache|fever|nausea|fatigue)\b',
-                r'\b(patient|clinical|diagnosis|treatment)\b',
-                r'\b(condition|disease|disorder|syndrome)\b'
-            ],
-            'reference_ranges': [
-                r'\b(reference|range|normal|limit)\b',
-                r'\d+\s*-\s*\d+(?:\.\d+)?',
-                r'\b(within|outside|above|below)\b'
-            ]
-        }
-    
-    def classify_query(self, query: str) -> Tuple[str, float]:
-        """Classify query and return type with confidence score"""
-        query_lower = query.lower()
-        scores = {}
-        
-        for query_type, patterns in self.query_patterns.items():
-            score = 0
-            for pattern in patterns:
-                matches = len(re.findall(pattern, query_lower, re.IGNORECASE))
-                score += matches
-            scores[query_type] = score
-        
-        if not any(scores.values()):
-            return 'general', 0.5
-        
-        best_type = max(scores, key=scores.get)
-        max_score = scores[best_type]
-        confidence = min(1.0, max_score / 3.0)  # Normalize confidence
-        
-        return best_type, confidence
-
 class DenseSearchEngine:
     """Enhanced search engine with dynamic top_k and medical query awareness"""
     
@@ -70,80 +19,10 @@ class DenseSearchEngine:
         self.embeddings = get_embedding_model()
         self.pinecone_client = pinecone.Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
         self.index = self.pinecone_client.Index(index_name)
-        self.query_classifier = MedicalQueryClassifier()
         
-        # Dynamic top_k configuration based on query type
-        self.top_k_config = {
-            'lab_results': {'base': 20, 'max': 40},
-            'procedures': {'base': 25, 'max': 50},
-            'symptoms': {'base': 30, 'max': 60},
-            'reference_ranges': {'base': 15, 'max': 30},
-            'general': {'base': 25, 'max': 45}
-        }
-        
-        # Similarity threshold for filtering
-        self.similarity_threshold = 0.3
-
-    def _determine_dynamic_top_k(self, query: str, query_type: str, confidence: float) -> int:
-        """Determine optimal top_k based on query complexity and type"""
-        config = self.top_k_config[query_type]
-        base_k = config['base']
-        max_k = config['max']
-        
-        # Adjust based on query complexity
-        query_complexity = self._calculate_query_complexity(query)
-        complexity_multiplier = 1.0 + (query_complexity * 0.5)
-        
-        # Adjust based on confidence
-        confidence_multiplier = 0.8 + (confidence * 0.4)
-        
-        dynamic_k = int(base_k * complexity_multiplier * confidence_multiplier)
-        return min(dynamic_k, max_k)
-    
-    def _calculate_query_complexity(self, query: str) -> float:
-        """Calculate query complexity based on various factors"""
-        factors = {
-            'length': len(query.split()) / 10.0,  # Normalize by typical query length
-            'medical_terms': len(re.findall(r'\b(?:mg/dL|mmHg|mEq/L|IU/mL|AU/mL|U/mL|TSH|HDL|LDL|HbA1c|PACS|RIS)\b', query, re.IGNORECASE)) / 5.0,
-            'numerical_values': len(re.findall(r'\d+\.\d+|\d+\s*-\s*\d+', query)) / 3.0,
-            'question_words': len(re.findall(r'\b(?:what|how|why|when|where|which|who)\b', query, re.IGNORECASE)) / 2.0
-        }
-        
-        # Weighted average of complexity factors
-        weights = {'length': 0.3, 'medical_terms': 0.4, 'numerical_values': 0.2, 'question_words': 0.1}
-        complexity = sum(min(1.0, factors[factor]) * weights[factor] for factor in factors)
-        
-        return min(1.0, complexity)
-    
-    def _filter_by_similarity_threshold(self, documents: List[Document]) -> List[Document]:
-        """Filter documents by similarity threshold"""
-        if not documents:
-            return documents
-        
-        filtered_docs = []
-        for doc in documents:
-            similarity_score = doc.metadata.get('score', 0.0)
-            if similarity_score >= self.similarity_threshold:
-                filtered_docs.append(doc)
-        
-        # If filtering removes too many results, keep top results anyway
-        if len(filtered_docs) < 5 and len(documents) >= 5:
-            return documents[:10]  # Keep at least 10 documents
-        
-        return filtered_docs
-
-    def search(self, query_text: str, top_k: int = None) -> List[Document]:
+    def search(self, query_text: str, top_k: int = 10) -> List[Document]:
         """Enhanced search with dynamic top_k and similarity filtering"""
         try:
-            # Classify query to determine optimal strategy
-            query_type, confidence = self.query_classifier.classify_query(query_text)
-            
-            # Determine dynamic top_k if not provided
-            if top_k is None:
-                top_k = self._determine_dynamic_top_k(query_text, query_type, confidence)
-            
-            logging.info(f"Query type: {query_type}, confidence: {confidence:.2f}, using top_k: {top_k}")
-            
             # Perform vector search
             query_vector = self.embeddings.embed_query(query_text)
             results = self.index.query(
@@ -168,14 +47,10 @@ class DenseSearchEngine:
                 )
                 # Add similarity score to metadata
                 doc.metadata['score'] = match.get('score', 0.0)
-                doc.metadata['query_type'] = query_type
                 documents.append(doc)
             
-            # Apply similarity threshold filtering
-            filtered_documents = self._filter_by_similarity_threshold(documents)
-            
-            logging.info(f"Retrieved {len(documents)} documents, filtered to {len(filtered_documents)}")
-            return filtered_documents
+            logging.info(f"Retrieved {len(documents)} documents")
+            return documents
             
         except Exception as e:
             logging.error(f"An error occurred during Pinecone query: {e}")

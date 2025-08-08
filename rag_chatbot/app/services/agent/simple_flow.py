@@ -50,10 +50,13 @@ class SimpleRAGFlow:
         )
         
         synthesis_prompt = (
-            f"Based on the following subquery responses and summaries, please synthesize a final, coherent, and complete answer to the main user query.\n\n"
+            f"You are an expert medical information synthesizer. Your task is to generate a comprehensive, detailed, and highly accurate answer to the main user query based on the provided subquery responses and summaries. "
+            f"You must synthesize the information into a single, coherent response. Do not repeat information. "
+            f"Ensure that all numerical values, percentages, names, dates, and key facts are accurately represented. "
+            f"If the context is insufficient to provide a complete answer, clearly state what information is missing.\n\n"
             f"Main User Query: {question}\n\n"
             f"{synthesis_context}\n\n"
-            f"FINAL SYNTHESIZED ANSWER:"
+            f"DETAILED AND COMPREHENSIVE FINAL ANSWER:"
         )
         
         return self.answer_generator.generate(synthesis_prompt, "")
