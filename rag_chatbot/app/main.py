@@ -10,24 +10,29 @@ import time
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from typing import List, Optional, Dict, Any
-from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
+from typing import List, Dict, Any
+from langchain_core.messages import HumanMessage, AIMessage, BaseMessage, message_to_dict, messages_from_dict
 
 from rag_chatbot.app.services.agent.builder import build_medical_rag_agent
 from rag_chatbot.app.services.agent.state import AgentState
 
-app = FastAPI(title="Medical RAG Chatbot", version="4.0.0")
-
-conversation_history: List[BaseMessage] = []
+app = FastAPI(title="Medical RAG Chatbot", version="4.0.1")
 
 agent = build_medical_rag_agent()
 
 class ChatRequest(BaseModel):
     question: str
+    chat_history: List[Dict[str, Any]] = []
 
-@app.post("/chat")
+class ChatResponse(BaseModel):
+    final_answer: str
+    chat_history: List[Dict[str, Any]]
+
+@app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
     try:
+        conversation_history = messages_from_dict(request.chat_history)
+
         initial_state = {
             "query_state": {
                 "original_query": request.question,
@@ -49,8 +54,7 @@ async def chat_endpoint(request: ChatRequest):
             },
             "generation_state": {
                 "final_answer": "",
-                "rich_citations": [],
-                "is_streaming": True,
+                "is_streaming": False, # Changed to False for non-streaming response
             },
             "performance_state": {
                 "node_timings": {},
@@ -59,29 +63,24 @@ async def chat_endpoint(request: ChatRequest):
             "error_state": {
                 "error_message": None,
                 "failed_node": None
-            }
+            },
+            "sub_queries": []
         }
         
         result = agent.run(initial_state)
         
-        conversation_history.append(HumanMessage(content=request.question))
-        final_answer = result.get("generation_state", {}).get("final_answer", "")
-        if final_answer:
-            conversation_history.append(AIMessage(content=final_answer))
-
-        streaming_response = result.get("generation_state", {}).get("streaming_response")
+        final_answer = result.get("generation_state", {}).get("final_answer", "I'm sorry, but I couldn't generate a response.")
         
-        if not streaming_response:
-            # Fallback for non-streaming results
-            async def string_generator(text):
-                yield text
-            return StreamingResponse(string_generator(final_answer), media_type="text/plain")
-
-        return StreamingResponse(
-            streaming_response,
-            media_type="text/event-stream"
+        # Update conversation history
+        updated_history = conversation_history + [
+            HumanMessage(content=request.question),
+            AIMessage(content=final_answer)
+        ]
+        
+        return ChatResponse(
+            final_answer=final_answer,
+            chat_history=[message_to_dict(msg) for msg in updated_history]
         )
-        
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing request: {str(e)}")
 
@@ -90,7 +89,7 @@ async def health_check():
     return {
         "status": "healthy",
         "service": "Medical RAG Chatbot",
-        "version": "4.0.0",
+        "version": "4.0.1",
         "agent_initialized": agent is not None
     }
 
@@ -98,7 +97,7 @@ async def health_check():
 async def root():
     return {
         "message": "Medical RAG Chatbot API",
-        "version": "4.0.0",
+        "version": "4.0.1",
         "endpoints": {
             "chat": "/chat",
             "health": "/health"

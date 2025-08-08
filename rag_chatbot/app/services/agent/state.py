@@ -22,8 +22,8 @@ class ContextState(TypedDict):
 
 class GenerationState(TypedDict):
     final_answer: str
-    rich_citations: List[Citation]
     is_streaming: bool
+    sub_query_responses: Optional[List[Dict[str, Any]]]
 
 class PerformanceState(TypedDict):
     node_timings: Dict[str, float]
@@ -41,3 +41,4 @@ class AgentState(TypedDict):
     performance_state: PerformanceState
     error_state: ErrorState
     conversation_history: List[Dict[str, Any]]
+    sub_queries: Optional[List[str]]

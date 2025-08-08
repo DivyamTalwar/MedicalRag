@@ -7,7 +7,6 @@ import re
 from uuid import uuid4, UUID
 from collections import defaultdict
 from typing import List, Dict, Any
-
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
@@ -18,6 +17,7 @@ from llama_parse import LlamaParse
 from langchain_pinecone import PineconeVectorStore
 from app.core.embeddings import get_embedding_model
 from langchain_core.documents import Document as LangchainDocument
+from app.core.exceptions import VectorDBError
 from llama_index.core import SimpleDirectoryReader
 from langchain.text_splitter import MarkdownHeaderTextSplitter
 from pinecone import Pinecone, ServerlessSpec
@@ -28,15 +28,12 @@ from app.models.data_models import DocumentChunk, EnhancedMedicalMetadata
 from app.core.extractor import MedicalEntityExtractor
 from llama_index.core.node_parser import NodeParser
 from llama_index.core.schema import BaseNode, TextNode
+from app.core.config import PARENT_INDEX_NAME, CHILD_INDEX_NAME, MONGO_DB_NAME, DIMENSION
 
 load_dotenv()
 nest_asyncio.apply()
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-PARENT_INDEX_NAME = "parent"
-CHILD_INDEX_NAME = "children"
-MONGO_DB_NAME = "AdvanceRag"
-DIMENSION = 1024
 
 def create_pinecone_indexes(pinecone_client: Pinecone, vector_size: int):
     for index_name in [PARENT_INDEX_NAME, CHILD_INDEX_NAME]:
@@ -871,11 +868,10 @@ async def main():
         results = await asyncio.gather(upsert_parents(), upsert_children(), return_exceptions=True)
         for result in results:
             if isinstance(result, Exception):
-                logging.error(f"An exception occurred during Pinecone upsert: {result}")
+                raise VectorDBError(db_name="Pinecone", message=f"An exception occurred during upsert: {result}")
 
     except Exception as e:
-        logging.error(f"Failed to upsert vectors to Pinecone: {e}")
-        return
+        raise VectorDBError(db_name="Pinecone", message=f"Failed to upsert vectors: {e}")
 
     track_extraction_metrics(all_mongo_chunks)
     logging.info("Ingestion process finished successfully.")
