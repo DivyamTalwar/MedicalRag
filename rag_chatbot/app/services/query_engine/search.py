@@ -9,21 +9,16 @@ from rag_chatbot.app.models.data_models import Document
 from rag_chatbot.app.core.embeddings import get_embedding_model
 import pinecone
 
-# Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-class DenseSearchEngine:
-    """Enhanced search engine with dynamic top_k and medical query awareness"""
-    
+class DenseSearchEngine:    
     def __init__(self, index_name: str = "children"):
         self.embeddings = get_embedding_model()
         self.pinecone_client = pinecone.Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
         self.index = self.pinecone_client.Index(index_name)
         
     def search(self, query_text: str, top_k: int = 10) -> List[Document]:
-        """Enhanced search with dynamic top_k and similarity filtering"""
         try:
-            # Perform vector search
             query_vector = self.embeddings.embed_query(query_text)
             results = self.index.query(
                 vector=query_vector,
@@ -37,7 +32,6 @@ class DenseSearchEngine:
                 logging.error(f"Unexpected response format from Pinecone: {results}")
                 return []
             
-            # Create Document objects with similarity scores
             documents = []
             for match in results_dict["matches"]:
                 doc = Document(
@@ -45,7 +39,6 @@ class DenseSearchEngine:
                     text=match['metadata'].get("text", ""),
                     metadata=match['metadata']
                 )
-                # Add similarity score to metadata
                 doc.metadata['score'] = match.get('score', 0.0)
                 documents.append(doc)
             
@@ -56,9 +49,7 @@ class DenseSearchEngine:
             logging.error(f"An error occurred during Pinecone query: {e}")
             return []
 
-class MedicalReranker:
-    """Enhanced reranker with medical-specific relevance boosting"""
-    
+class MedicalReranker:    
     def __init__(self, model_name: str = 'cross-encoder/ms-marco-MiniLM-L-6-v2'):
         try:
             self.model = CrossEncoder(model_name)
@@ -67,16 +58,15 @@ class MedicalReranker:
             logging.error(f"Failed to load cross-encoder model: {e}")
             self.model = None
         
-        # Medical relevance patterns based on your sample documents
         self.medical_patterns = {
             'lab_values': [
                 r'\d+\.\d+\s*(?:mg/dL|mmHg|mEq/L|IU/mL|AU/mL|U/mL|%)',
-                r'\d+\s*-\s*\d+(?:\.\d+)?',  # Reference ranges
+                r'\d+\s*-\s*\d+(?:\.\d+)?', 
                 r'\b(?:HbA1c|TSH|HDL|LDL|CBC|ESR|WBC|RBC|T3|T4)\b'
             ],
             'measurements': [
-                r'\b(?:pH|PCO2|PO2|HCO3|TCO2)\b',  # Blood gas
-                r'\b(?:P2|P3)\s*(?:Peak|Window)\b',  # Hemoglobin electrophoresis
+                r'\b(?:pH|PCO2|PO2|HCO3|TCO2)\b',  
+                r'\b(?:P2|P3)\s*(?:Peak|Window)\b',
                 r'\b(?:Hb\s*[AF]2?|Hemoglobin\s*[AF]2?)\b'
             ],
             'procedures': [
@@ -92,23 +82,19 @@ class MedicalReranker:
         }
     
     def _calculate_medical_relevance_boost(self, text: str, query: str) -> float:
-        """Calculate medical relevance boost score"""
         text_lower = text.lower()
         query_lower = query.lower()
         boost_score = 0.0
         
-        # Boost for matching medical patterns
         for category, patterns in self.medical_patterns.items():
             category_matches = 0
             for pattern in patterns:
                 text_matches = len(re.findall(pattern, text, re.IGNORECASE))
                 query_matches = len(re.findall(pattern, query, re.IGNORECASE))
                 
-                # Boost if both query and text contain similar medical terms
                 if text_matches > 0 and query_matches > 0:
                     category_matches += min(text_matches, query_matches)
             
-            # Weight different categories
             category_weights = {
                 'lab_values': 0.4,
                 'measurements': 0.3,
@@ -117,22 +103,19 @@ class MedicalReranker:
             }
             boost_score += category_matches * category_weights.get(category, 0.1)
         
-        # Additional boost for exact value matches (critical for lab results)
         value_pattern = r'\d+\.\d+'
         query_values = set(re.findall(value_pattern, query))
         text_values = set(re.findall(value_pattern, text))
         exact_value_matches = len(query_values.intersection(text_values))
         boost_score += exact_value_matches * 0.5
         
-        return min(1.0, boost_score)  # Cap at 1.0
+        return min(1.0, boost_score) 
     
     def _calculate_medical_entity_preservation(self, text: str, query: str) -> float:
-        """Calculate how well medical entities are preserved"""
-        # Extract medical entities from query
         entity_patterns = [
-            r'\b[A-Z]{2,}\b',  # Abbreviations
-            r'\b(?:mg/dL|mmHg|mEq/L|IU/mL|AU/mL|U/mL|%)\b',  # Units
-            r'\b(?:HbA1c|TSH|HDL|LDL|P2|P3|pH|PCO2|PO2)\b'  # Specific terms
+            r'\b[A-Z]{2,}\b',
+            r'\b(?:mg/dL|mmHg|mEq/L|IU/mL|AU/mL|U/mL|%)\b',
+            r'\b(?:HbA1c|TSH|HDL|LDL|P2|P3|pH|PCO2|PO2)\b' 
         ]
         
         query_entities = set()
@@ -143,7 +126,7 @@ class MedicalReranker:
             text_entities.update(re.findall(pattern, text, re.IGNORECASE))
         
         if not query_entities:
-            return 1.0  # No entities to preserve
+            return 1.0 
         
         preserved_entities = query_entities.intersection(text_entities)
         preservation_ratio = len(preserved_entities) / len(query_entities)
@@ -151,50 +134,40 @@ class MedicalReranker:
         return preservation_ratio
     
     def _apply_similarity_threshold_filtering(self, documents: List[Document], threshold: float = 0.1) -> List[Document]:
-        """Remove documents with very low rerank scores"""
         if not documents:
             return documents
         
         filtered_docs = [doc for doc in documents if doc.metadata.get('rerank_score', 0.0) >= threshold]
         
-        # Ensure we keep at least a few documents
         if len(filtered_docs) < 3 and len(documents) >= 3:
             return sorted(documents, key=lambda x: x.metadata.get('rerank_score', 0.0), reverse=True)[:5]
         
         return filtered_docs
 
     def rerank(self, query: str, documents: List[Document], top_k: int = 10) -> List[Document]:
-        """Enhanced reranking with medical-specific relevance and entity preservation"""
         if not self.model or not documents:
             return documents[:top_k] if documents else []
 
         try:
-            # Prepare pairs for cross-encoder
             pairs = [[query, doc.text] for doc in documents]
             
-            # Get base reranking scores
             base_scores = self.model.predict(pairs, show_progress_bar=False)
             
             if not isinstance(base_scores, (list, np.ndarray)):
                 logging.error(f"Reranker did not return a list or numpy array: {base_scores}")
                 return documents[:top_k]
             
-            # Apply medical-specific enhancements
             for doc, base_score in zip(documents, base_scores):
-                # Calculate medical relevance boost
                 medical_boost = self._calculate_medical_relevance_boost(doc.text, query)
                 
-                # Calculate entity preservation score
                 entity_preservation = self._calculate_medical_entity_preservation(doc.text, query)
                 
-                # Combine scores with weights
                 final_score = (
-                    base_score * 0.6 +  # Base cross-encoder score
-                    medical_boost * 0.3 +  # Medical relevance boost
-                    entity_preservation * 0.1  # Entity preservation
+                    base_score * 0.6 +  
+                    medical_boost * 0.3 + 
+                    entity_preservation * 0.1  
                 )
                 
-                # Store all scores in metadata for debugging
                 doc.metadata.update({
                     'rerank_score': float(final_score),
                     'base_score': float(base_score),
@@ -202,10 +175,8 @@ class MedicalReranker:
                     'entity_preservation': float(entity_preservation)
                 })
             
-            # Sort by final score
             ranked_documents = sorted(documents, key=lambda x: x.metadata['rerank_score'], reverse=True)
             
-            # Apply similarity threshold filtering
             filtered_documents = self._apply_similarity_threshold_filtering(ranked_documents)
             
             logging.info(f"Reranked {len(documents)} documents, filtered to {len(filtered_documents)}, returning top {min(top_k, len(filtered_documents))}")
@@ -216,5 +187,4 @@ class MedicalReranker:
             logging.error(f"Error during medical reranking: {e}")
             return documents[:top_k]
 
-# Backward compatibility - alias the enhanced reranker
 Reranker = MedicalReranker

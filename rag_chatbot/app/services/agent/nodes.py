@@ -54,16 +54,12 @@ class ProcessSubQueriesNode:
         self.answer_generator = answer_generator
 
     def process_single_subquery(self, subquery: str) -> SubQueryResponse:
-        # 1. Retrieve child chunks
         child_chunks = self.searcher.search(subquery, top_k=10)
         
-        # 2. Rerank child chunks
         reranked_chunks = self.reranker.rerank(subquery, child_chunks, top_k=3)
         
-        # 3. Get parent chunks from MongoDB
         parent_chunks, assembled_context = self.context_assembler.assemble(reranked_chunks)
         
-        # 4. Generate response and summary
         response_prompt = (
             f"Based on the following context, please provide a direct and comprehensive answer to the subquery.\n\n"
             f"Context:\n{assembled_context}\n\n"

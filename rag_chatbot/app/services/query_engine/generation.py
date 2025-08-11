@@ -5,7 +5,6 @@ from typing import List, Dict, Any
 from rag_chatbot.app.core.llm import CustomLLM
 from rag_chatbot.app.models.data_models import Document
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 

@@ -33,7 +33,6 @@ async def chat_endpoint(request: ChatRequest):
         
         final_answer = await agent.run(request.question, chat_history=conversation_history)
         
-        # Update conversation history
         updated_history = conversation_history + [
             HumanMessage(content=request.question),
             AIMessage(content=final_answer)
@@ -58,13 +57,7 @@ async def health_check():
 @app.get("/")
 async def root():
     return {
-        "message": "Medical RAG Chatbot API",
-        "version": "5.0.0",
-        "endpoints": {
-            "chat": "/chat",
-            "health": "/health"
-        }
-    }
+        "message": "Medical RAG Chatbot API",}
 
 if __name__ == "__main__":
     import uvicorn

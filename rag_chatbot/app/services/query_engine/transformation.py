@@ -23,11 +23,11 @@ class QueryCondenser:
         self.llm = llm
         self._template = self._create_template()
         self.critical_medical_patterns = [
-            r'\b\d+\.\d+\s*(?:mg/dL|mmHg|mEq/L|IU/mL|AU/mL|U/mL|%)\b',  # Lab values with units
-            r'\b(?:HbA1c|TSH|HDL|LDL|CBC|ESR|WBC|RBC)\b',  # Critical lab markers
-            r'\b\d+\s*-\s*\d+(?:\.\d+)?\b',  # Reference ranges
-            r'\b(?:pH|PCO2|PO2|HCO3|TCO2)\b',  # Blood gas parameters
-            r'\b(?:Toxoplasma|Rubella|Cytomegalovirus|Herpes)\b',  # TORCH infections
+            r'\b\d+\.\d+\s*(?:mg/dL|mmHg|mEq/L|IU/mL|AU/mL|U/mL|%)\b',  
+            r'\b(?:HbA1c|TSH|HDL|LDL|CBC|ESR|WBC|RBC)\b',  
+            r'\b\d+\s*-\s*\d+(?:\.\d+)?\b',  
+            r'\b(?:pH|PCO2|PO2|HCO3|TCO2)\b',  
+            r'\b(?:Toxoplasma|Rubella|Cytomegalovirus|Herpes)\b',  
         ]
 
     def _create_template(self):
@@ -43,7 +43,6 @@ class QueryCondenser:
         )
 
     def _preserve_medical_context(self, original: str, condensed: str) -> str:
-        """Ensure critical medical terms are preserved in condensed query"""
         for pattern in self.critical_medical_patterns:
             original_matches = set(re.findall(pattern, original, re.IGNORECASE))
             condensed_matches = set(re.findall(pattern, condensed, re.IGNORECASE))
@@ -66,7 +65,6 @@ class QueryCondenser:
             prompt = self._template.format(chat_history=history_str, question=question)
             response = self.llm.invoke(prompt)['content'].strip()
             
-            # Preserve critical medical context
             response = self._preserve_medical_context(question, response)
             
             return response
@@ -148,7 +146,6 @@ Your JSON Response:
             question = self.query_condenser.condense(question, chat_history)
 
         content = ""
-        # Attempt 1: Structured LLM call
         try:
             prompt = self._create_subquery_prompt(question)
             response = self.llm.invoke(prompt)
@@ -167,14 +164,12 @@ Your JSON Response:
         except Exception as e:
             logging.error(f"Attempt 1 failed: {e}")
         
-        # Attempt 2: Regex extraction
         try:
             queries_dict = self._extract_queries_with_regex(content or question)
             return SubQueryGeneration.model_validate(queries_dict)
         except Exception as e:
             logging.error(f"Attempt 2 failed: {e}")
         
-        # Attempt 3: LLM repair
         try:
             repair_prompt = f"""
             Fix this broken JSON to match the required format:
@@ -215,7 +210,6 @@ class ContradictionDetector:
         )
 
     def _regex_confidence_extraction(self, response: str) -> float:
-        """Extract confidence score using regex when JSON parsing fails"""
         confidence_patterns = [
             r'confidence[_\s]*score[\'\":\s]*(\d*\.?\d+)',
             r'confidence[\'\":\s]*(\d*\.?\d+)',
@@ -228,26 +222,22 @@ class ContradictionDetector:
             if match:
                 try:
                     score = float(match.group(1))
-                    # Convert percentage to decimal if needed
                     if score > 1.0:
                         score = score / 100.0
                     return max(0.0, min(1.0, score))
                 except ValueError:
                     continue
         
-        # Default confidence based on response content
         if any(word in response.lower() for word in ['contradict', 'conflict', 'inconsistent']):
             return 0.7
         elif any(word in response.lower() for word in ['no contradiction', 'consistent', 'agree']):
             return 0.1
         
-        return 0.5  # Default fallback
+        return 0.5 
 
     def _regex_indices_extraction(self, response: str, num_chunks: int) -> List[int]:
-        """Extract contradictory indices using regex when JSON parsing fails"""
         indices = []
         
-        # Look for numbered indices
         index_patterns = [
             r'indices?[\'\":\s]*\[([^\]]+)\]',
             r'chunks?[\'\":\s]*\[([^\]]+)\]',
@@ -261,17 +251,16 @@ class ContradictionDetector:
                 if isinstance(match, tuple):
                     match = match[0] if match[0] else match[1] if len(match) > 1 else ""
                 
-                # Extract numbers from the match
                 numbers = re.findall(r'\d+', str(match))
                 for num in numbers:
                     try:
-                        idx = int(num) - 1  # Convert to 0-based indexing
+                        idx = int(num) - 1  
                         if 0 <= idx < num_chunks:
                             indices.append(idx)
                     except ValueError:
                         continue
         
-        return list(set(indices))  # Remove duplicates
+        return list(set(indices)) 
 
     def detect(self, chunks: List[str]) -> Dict[str, Any]:
         if len(chunks) < 2:
@@ -284,7 +273,6 @@ class ContradictionDetector:
         try:
             response = self.llm.invoke(prompt).content
             
-            # Try JSON parsing first
             json_match = re.search(r'\{.*\}', response, re.DOTALL)
             if json_match:
                 result = json.loads(json_match.group())
@@ -303,7 +291,6 @@ class ContradictionDetector:
         except (json.JSONDecodeError, TypeError, AttributeError) as e:
             logging.warning(f"JSON parsing failed, using regex extraction: {e}")
             
-            # Regex-based fallback extraction
             confidence_score = self._regex_confidence_extraction(response)
             contradictory_indices = self._regex_indices_extraction(response, len(chunks))
             
@@ -316,25 +303,20 @@ class ContradictionDetector:
 class MedicalQueryExpander:
     def __init__(self):
         self.entity_extractor = MedicalEntityExtractor()
-        # Comprehensive synonym map based on your sample PDFs
         self.synonym_map = {
-            # Imaging modalities
             "ct": ["computed tomography", "cat scan", "ct scan"],
             "mri": ["magnetic resonance imaging", "nmr", "mri scan"],
             "us": ["ultrasound", "sonography", "echo", "ultrasonography"],
             "xray": ["x-ray", "radiograph", "roentgen", "radiography"],
             
-            # Medical abbreviations
             "dx": ["diagnosis", "diagnostic", "diagnose"],
             "fx": ["fracture", "break", "broken bone", "bone fracture"],
             "hx": ["history", "medical history", "patient history"],
             "tx": ["treatment", "therapy", "therapeutic"],
             
-            # Body parts and systems
             "abd": ["abdomen", "abdominal", "belly"],
             "chest": ["thorax", "thoracic", "lung", "pulmonary"],
             
-            # Lab tests and markers (from your PDFs)
             "cbc": ["complete blood count", "full blood count", "blood count"],
             "hba1c": ["glycosylated hemoglobin", "glycated hemoglobin", "hemoglobin a1c"],
             "tsh": ["thyroid stimulating hormone", "thyrotropin"],
@@ -346,21 +328,18 @@ class MedicalQueryExpander:
             "wbc": ["white blood cell", "white blood count", "leukocyte"],
             "rbc": ["red blood cell", "red blood count", "erythrocyte"],
             
-            # TORCH profile (from your PDFs)
             "torch": ["toxoplasma rubella cytomegalovirus herpes", "torch panel", "torch screen"],
             "toxoplasma": ["toxoplasmosis", "toxoplasma gondii"],
             "rubella": ["german measles", "rubella virus"],
             "cmv": ["cytomegalovirus", "human cytomegalovirus"],
             "hsv": ["herpes simplex virus", "herpes simplex"],
             
-            # Blood gas parameters (from your PDFs)
             "abg": ["arterial blood gas", "blood gas analysis", "arterial blood gases"],
             "pco2": ["partial pressure carbon dioxide", "carbon dioxide pressure"],
             "po2": ["partial pressure oxygen", "oxygen pressure"],
             "hco3": ["bicarbonate", "hydrogen carbonate"],
             "tco2": ["total carbon dioxide", "total co2"],
             
-            # Medical units and values
             "mg/dl": ["milligrams per deciliter", "mg per dl"],
             "mmhg": ["millimeters mercury", "mm hg", "torr"],
             "meq/l": ["milliequivalents per liter", "meq per liter"],
@@ -368,14 +347,12 @@ class MedicalQueryExpander:
             "au/ml": ["arbitrary units per milliliter"],
             "u/ml": ["units per milliliter"],
             
-            # Hemoglobin electrophoresis (from your PDFs)
             "hplc": ["high performance liquid chromatography", "liquid chromatography"],
             "p2": ["p2 peak", "p2 window", "p2 hemoglobin"],
             "p3": ["p3 peak", "p3 window", "p3 hemoglobin"],
             "hbf": ["fetal hemoglobin", "hemoglobin f"],
             "hba2": ["hemoglobin a2", "hb a2"],
             
-            # Radiology workflow terms (from CIVIE PDF)
             "pacs": ["picture archiving communication system", "medical imaging system"],
             "ris": ["radiology information system", "radiology system"],
             "dicom": ["digital imaging communications medicine", "medical imaging standard"],
@@ -383,23 +360,20 @@ class MedicalQueryExpander:
             "tat": ["turnaround time", "turn around time"],
             "sla": ["service level agreement", "service agreement"],
             
-            # Procedure and workflow terms
             "radflow": ["radiology workflow", "rad flow", "radiology flow"],
             "qr": ["quality review", "peer review"],
             "stat": ["urgent", "emergency", "immediate", "priority"],
             
-            # General medical terms
             "ref": ["reference", "normal range", "reference range"],
             "nl": ["normal", "within normal limits", "wnl"],
             "abn": ["abnormal", "outside normal", "irregular"],
         }
     
     def _extract_lab_values_and_units(self, query: str) -> List[str]:
-        """Extract lab values and units from query"""
         value_patterns = [
             r'\d+\.\d+\s*(?:mg/dL|mmHg|mEq/L|IU/mL|AU/mL|U/mL|%)',
-            r'\d+\s*-\s*\d+(?:\.\d+)?',  # Reference ranges
-            r'(?:mg/dL|mmHg|mEq/L|IU/mL|AU/mL|U/mL)',  # Units
+            r'\d+\s*-\s*\d+(?:\.\d+)?', 
+            r'(?:mg/dL|mmHg|mEq/L|IU/mL|AU/mL|U/mL)', 
         ]
         
         extracted = []
@@ -410,7 +384,6 @@ class MedicalQueryExpander:
         return extracted
     
     def _extract_procedure_names(self, query: str) -> List[str]:
-        """Extract procedure names from query"""
         procedure_patterns = [
             r'(?:blood gas|torch|hemoglobin electrophoresis|lipid profile)',
             r'(?:complete blood count|thyroid function|iron studies)',
@@ -432,15 +405,12 @@ class MedicalQueryExpander:
             expanded_terms = set(flat_entities)
             expanded_terms.update(query.lower().split())
             
-            # Add lab values and units
             lab_values = self._extract_lab_values_and_units(query)
             expanded_terms.update(lab_values)
             
-            # Add procedure names
             procedures = self._extract_procedure_names(query)
             expanded_terms.update(procedures)
             
-            # Enhanced synonym expansion
             for term in query.lower().split():
                 clean_term = term.strip(".,?!()")
                 if clean_term in self.synonym_map:

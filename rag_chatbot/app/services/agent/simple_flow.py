@@ -46,7 +46,7 @@ class SimpleRAGFlow:
                         subquery_response=get_fallback_response(query, "context_assembly"),
                         summary="No data available for this query."
                     )
-                await asyncio.sleep(1)  # Wait before retrying
+                await asyncio.sleep(1)
         return SubQueryResponse(
             subquery_response=get_fallback_response(query, "context_assembly"),
             summary="No data available for this query."
