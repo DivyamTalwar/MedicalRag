@@ -139,7 +139,7 @@ class MedicalReranker:
         
         filtered_docs = [doc for doc in documents if doc.metadata.get('rerank_score', 0.0) >= threshold]
         
-        if len(filtered_docs) < 3 and len(documents) >= 3:
+        if len(filtered_docs) < 5 and len(documents) >= 5:
             return sorted(documents, key=lambda x: x.metadata.get('rerank_score', 0.0), reverse=True)[:5]
         
         return filtered_docs

@@ -50,8 +50,6 @@ async def health_check():
     return {
         "status": "healthy",
         "service": "Medical RAG Chatbot",
-        "version": "5.0.0",
-        "agent_initialized": agent is not None
     }
 
 @app.get("/")

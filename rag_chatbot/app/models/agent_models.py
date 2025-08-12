@@ -2,24 +2,21 @@ from pydantic import BaseModel, Field, validator
 from typing import List
 
 class SubQueryGeneration(BaseModel):
-    query1: str = Field(
-        description="First subquery derived from the main question",
-        min_length=5,
-        max_length=200,
-        example="What are the key features of CIVIE's scheduling system?"
+    queries: List[str] = Field(
+        description="A list of 2-5 subqueries derived from the main question",
+        min_items=2,
+        max_items=5,
+        example=[
+            "What are the key features of CIVIE's scheduling system?",
+            "How does CIVIE handle patient appointment management?"
+        ]
     )
-    query2: str = Field(
-        description="Second subquery derived from the main question", 
-        min_length=5,
-        max_length=200,
-        example="How does CIVIE handle patient appointment management?"
-    )
-    
-    @validator('query1', 'query2')
+
+    @validator('queries')
     def validate_queries(cls, v):
-        if not v.strip():
-            raise ValueError("Query cannot be empty")
-        return v.strip()
+        if not all(q.strip() for q in v):
+            raise ValueError("All queries must be non-empty")
+        return [q.strip() for q in v]
 
 class SubQueryResponse(BaseModel):
     subquery_response: str = Field(

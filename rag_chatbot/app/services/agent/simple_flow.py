@@ -52,13 +52,15 @@ class SimpleRAGFlow:
             summary="No data available for this query."
         )
 
-    async def synthesize_final_answer(self, question: str, subquery1: str, response1: SubQueryResponse, subquery2: str, response2: SubQueryResponse, chat_history: List = [], max_retries: int = 3) -> str:
-        synthesis_context = (
-            f"Subquery 1: {subquery1}\nResponse 1: {response1.subquery_response}\nSummary 1: {response1.summary}\n\n"
-            f"Subquery 2: {subquery2}\nResponse 2: {response2.subquery_response}\nSummary 2: {response2.summary}"
+    async def synthesize_final_answer(self, question: str, subquery_responses: List[SubQueryResponse], subqueries: List[str], chat_history: List = [], max_retries: int = 3) -> str:
+        synthesis_context = "\n\n".join(
+            [
+                f"Subquery {i+1}: {subqueries[i]}\nResponse {i+1}: {resp.subquery_response}\nSummary {i+1}: {resp.summary}"
+                for i, resp in enumerate(subquery_responses)
+            ]
         )
         
-        synthesis_prompt = f"""You are a master medical information synthesizer. Your task is to create a single, comprehensive answer to the user's main question by integrating the information from the two subquery responses. Do not repeat information. Accurately represent all numerical values and key facts.
+        synthesis_prompt = f"""You are a master medical information synthesizer. Your task is to create a single, comprehensive answer to the user's main question by integrating the information from the subquery responses. Do not repeat information. Accurately represent all numerical values and key facts.
 
 **Main User Query:**
 {question}
@@ -87,20 +89,18 @@ The patient's Rubella IgG antibody level is 25.0 IU/mL, and the IgM level is 0.2
         return get_fallback_response(question, "synthesis")
 
     async def run(self, question: str, chat_history: List = []) -> str:
-        subqueries = await self.sub_query_generator.generate(question, chat_history)
+        subqueries_model = await self.sub_query_generator.generate(question, chat_history)
         
         tasks = [
-            self.simple_subquery_process(subqueries.query1, chat_history),
-            self.simple_subquery_process(subqueries.query2, chat_history)
+            self.simple_subquery_process(query, chat_history)
+            for query in subqueries_model.queries
         ]
         responses = await asyncio.gather(*tasks)
         
         final_response = await self.synthesize_final_answer(
             question=question,
-            subquery1=subqueries.query1,
-            response1=responses[0],
-            subquery2=subqueries.query2, 
-            response2=responses[1],
+            subquery_responses=responses,
+            subqueries=subqueries_model.queries,
             chat_history=chat_history
         )
         

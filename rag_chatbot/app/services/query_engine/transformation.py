@@ -85,34 +85,42 @@ class SubQueryGenerator:
 
     def _create_subquery_prompt(self, question: str) -> str:
         return f"""
-You are a highly intelligent medical information assistant. Your purpose is to decompose a complex medical question into two distinct, non-overlapping subqueries.
+You are an expert medical analyst. Your task is to decompose a complex medical question into 2 to 5 precise, non-overlapping subqueries.
 
 **Main Question:**
 "{question}"
 
 **Your Task:**
-Generate exactly two subqueries that break down the main question into smaller, logical components.
+Generate a JSON object containing a list of 2 to 5 subqueries that break down the main question.
 
-**Rules:**
-1.  **Distinct and Non-Overlapping:** Each subquery must investigate a different aspect of the main question.
-2.  **Medically Precise:** Use clear and specific medical terminology.
-3.  **No Redundancy:** The two subqueries should not ask for the same information.
-4.  **JSON Output Only:** Your response must be a valid JSON object and nothing else.
+**Strict Rules:**
+1.  **JSON Output Only:** The output must be a single, valid JSON object with a "queries" key containing a list of strings.
+2.  **No Overlap:** Each subquery must be distinct and cover a unique aspect of the main question.
+3.  **Medical Precision:** Use exact medical terminology. Preserve all values, units, and terms from the original question.
+4.  **Clarity and Conciseness:** Each subquery should be a clear, direct question.
 
 **Good Example:**
-Main Question: "Based on the TORCH report, what do the Rubella IgG and IgM antibody levels mean for infection or immunity?"
+Main Question: "Analyze the patient's arterial blood gas (ABG) results: pH 7.35, PCO2 45 mmHg, PO2 95 mmHg, and HCO3 24 mEq/L. What is the acid-base status, and how does it relate to the patient's respiratory and metabolic condition?"
 Response:
 {{
-    "query1": "What are the specific values for Rubella IgG and IgM antibodies in the TORCH report?",
-    "query2": "How are Rubella IgG and IgM antibody levels interpreted to determine infection versus immunity?"
+    "queries": [
+        "What is the patient's acid-base status based on a pH of 7.35?",
+        "How does a PCO2 of 45 mmHg indicate the patient's respiratory status?",
+        "What does an HCO3 of 24 mEq/L reveal about the patient's metabolic condition?",
+        "Is there evidence of compensation in the ABG results?",
+        "What is the patient's oxygenation status given a PO2 of 95 mmHg?"
+    ]
 }}
 
-**Bad Example (Redundant and Vague):**
-Main Question: "Tell me about the patient's blood test."
+**Bad Example (Vague and Overlapping):**
+Main Question: "What's up with the patient's lab work?"
 Response:
 {{
-    "query1": "What did the blood test show?",
-    "query2": "What are the results of the blood analysis?"
+    "queries": [
+        "What are the lab results?",
+        "Tell me about the blood test.",
+        "Are the labs normal?"
+    ]
 }}
 
 **Your JSON Response:**
@@ -136,25 +144,22 @@ Response:
             return ""
 
     def _extract_queries_with_regex(self, text: str) -> dict:
-        patterns = [
-            r'"query1":\s*"([^"]+)".*?"query2":\s*"([^"]+)"',
-            r'query1["\s:]*([^,\n}]+).*?query2["\s:]*([^,\n}]+)',
-            r'1[.)]\s*([^\n2]+).*?2[.)]\s*([^\n]+)',
-            r'First.*?:\s*([^\n]+).*?Second.*?:\s*([^\n]+)'
-        ]
-        
-        for pattern in patterns:
-            match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
-            if match:
-                query1 = match.group(1).strip().strip('"').strip("'")
-                query2 = match.group(2).strip().strip('"').strip("'")
-                
-                if len(query1) >= 5 and len(query2) >= 5:
-                    return {"query1": query1, "query2": query2}
-        
+        queries_match = re.search(r'\[\s*("([^"]+)"\s*,\s*)*"([^"]+)"\s*\]', text, re.DOTALL)
+        if queries_match:
+            queries = re.findall(r'"([^"]+)"', queries_match.group(0))
+            if queries:
+                return {"queries": queries}
+
+        # Fallback for numbered lists
+        queries = re.findall(r'^\s*\d+[.)]\s*(.*)', text, re.MULTILINE)
+        if len(queries) >= 2:
+            return {"queries": [q.strip() for q in queries]}
+
         return {
-            "query1": f"What are the main components of {text[:50]}?",
-            "query2": f"How does the process work for {text[:50]}?"
+            "queries": [
+                f"What are the main components of {text[:50]}?",
+                f"How does the process work for {text[:50]}?"
+            ]
         }
 
     async def generate(self, question: str, chat_history: List = []) -> SubQueryGeneration:
@@ -169,6 +174,10 @@ Response:
             
             if content:
                 try:
+                    json_str = re.search(r'```json\s*(\{.*?\})\s*```', content, re.DOTALL)
+                    if json_str:
+                        content = json_str.group(1)
+                    
                     json_data = json.loads(content)
                     return SubQueryGeneration.model_validate(json_data)
                 except json.JSONDecodeError:
@@ -178,35 +187,19 @@ Response:
                         return SubQueryGeneration.model_validate(json_data)
                         
         except Exception as e:
-            logging.error(f"Attempt 1 failed: {e}")
+            logging.error(f"Subquery generation attempt 1 failed: {e}")
         
         try:
             queries_dict = self._extract_queries_with_regex(content or question)
             return SubQueryGeneration.model_validate(queries_dict)
         except Exception as e:
-            logging.error(f"Attempt 2 failed: {e}")
+            logging.error(f"Subquery generation attempt 2 (regex) failed: {e}")
         
-        try:
-            repair_prompt = f"""
-            Fix this broken JSON to match the required format:
-            Broken: {content}
-            
-            Required format:
-            {{"query1": "...", "query2": "..."}}
-            
-            Fixed JSON:
-            """
-            repaired = self.llm.invoke(repair_prompt)
-            repaired_content = self._extract_llm_content(repaired)
-            json_data = json.loads(repaired_content)
-            return SubQueryGeneration.model_validate(json_data)
-        except Exception as e:
-            logging.error(f"Attempt 3 failed: {e}")
-        
-        # Final fallback - NEVER fails
         return SubQueryGeneration(
-            query1=f"What are the main aspects of: {question}",
-            query2=f"How does the following work: {question}"
+            queries=[
+                f"What are the main aspects of: {question}",
+                f"How does the following work: {question}"
+            ]
         )
 
 class ContradictionDetector:
