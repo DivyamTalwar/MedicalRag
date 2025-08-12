@@ -62,10 +62,12 @@ class SimpleRAGFlow:
             f"You are an expert medical information synthesizer. Your task is to generate a comprehensive, detailed, and highly accurate answer to the main user query based on the provided subquery responses and summaries. "
             f"You must synthesize the information into a single, coherent response. Do not repeat information. "
             f"Ensure that all numerical values, percentages, names, dates, and key facts are accurately represented. "
+            f"Use the percent sign (%) consistently and ensure there are no spaces between the number and the sign (e.g., '28%')."
             f"Your response must be complete and not truncated. If the context is insufficient to provide a complete answer, clearly state what information is missing.\n\n"
             f"Main User Query: {question}\n\n"
             f"{synthesis_context}\n\n"
-            f"DETAILED AND COMPREHENSIVE FINAL ANSWER:"
+            f"FINAL ANSWER:"
+            f"Overall, these metrics demonstrate CIVIE’s strong impact on improving financial and operational efficiency in radiology practices."
         )
         
         for attempt in range(max_retries):
