@@ -32,13 +32,16 @@ class QueryCondenser:
 
     def _create_template(self):
         return (
-            "Given the following conversation and a follow-up question, rephrase the "
-            "follow-up question to be a standalone question that is precise and "
-            "medically relevant. **CRITICAL**: Preserve ALL medical terminology, lab values, "
-            "units, reference ranges, and numerical data exactly as written.\n\n"
+            "You are an expert medical assistant. Your task is to rephrase a follow-up question into a standalone, medically precise question based on the provided chat history. "
+            "It is **CRITICAL** to preserve all medical terminology, lab values, units, and numerical data exactly as they appear in the original question. Do not alter or omit any details.\n\n"
             "Chat History:\n"
             "{chat_history}\n\n"
-            "Follow-up Input: {question}\n"
+            "Follow-up Input: {question}\n\n"
+            "Example:\n"
+            "Chat History: User: What does a high TSH level of 4.5 mIU/L indicate?\n"
+            "Follow-up Input: What about the T4 levels?\n"
+            "Standalone Medical Question: Based on a TSH level of 4.5 mIU/L, what do the corresponding T4 levels indicate?\n\n"
+            "Your Turn:\n"
             "Standalone Medical Question:"
         )
 
@@ -82,23 +85,37 @@ class SubQueryGenerator:
 
     def _create_subquery_prompt(self, question: str) -> str:
         return f"""
-You are a medical information assistant. Generate exactly 2 subqueries from the main question.
+You are a highly intelligent medical information assistant. Your purpose is to decompose a complex medical question into two distinct, non-overlapping subqueries.
 
-Main Question: {question}
+**Main Question:**
+"{question}"
 
-IMPORTANT: Respond ONLY with valid JSON in this exact format:
+**Your Task:**
+Generate exactly two subqueries that break down the main question into smaller, logical components.
+
+**Rules:**
+1.  **Distinct and Non-Overlapping:** Each subquery must investigate a different aspect of the main question.
+2.  **Medically Precise:** Use clear and specific medical terminology.
+3.  **No Redundancy:** The two subqueries should not ask for the same information.
+4.  **JSON Output Only:** Your response must be a valid JSON object and nothing else.
+
+**Good Example:**
+Main Question: "Based on the TORCH report, what do the Rubella IgG and IgM antibody levels mean for infection or immunity?"
+Response:
 {{
-    "query1": "First subquery here",
-    "query2": "Second subquery here"
+    "query1": "What are the specific values for Rubella IgG and IgM antibodies in the TORCH report?",
+    "query2": "How are Rubella IgG and IgM antibody levels interpreted to determine infection versus immunity?"
 }}
 
-Example Response:
+**Bad Example (Redundant and Vague):**
+Main Question: "Tell me about the patient's blood test."
+Response:
 {{
-    "query1": "What are the key features of the 5-step order process?",
-    "query2": "How does the order journey work in CIVIE system?"
+    "query1": "What did the blood test show?",
+    "query2": "What are the results of the blood analysis?"
 }}
 
-Your JSON Response:
+**Your JSON Response:**
 """
 
     def _extract_llm_content(self, response) -> str:
@@ -141,7 +158,6 @@ Your JSON Response:
         }
 
     async def generate(self, question: str, chat_history: List = []) -> SubQueryGeneration:
-        """Absolutely bulletproof subquery generation"""
         if chat_history:
             question = self.query_condenser.condense(question, chat_history)
 
@@ -200,13 +216,34 @@ class ContradictionDetector:
 
     def _create_template(self):
         return (
-            "You are an expert at detecting contradictions in text. "
-            "Given a list of text chunks, identify any chunks that contradict each other. "
-            "Return a JSON object with two keys: 'contradictory_indices' (a list of the indices of the contradictory chunks) "
-            "and 'confidence_score' (a float from 0.0 to 1.0 indicating your confidence in the detection). "
-            "If there are no contradictions, return an empty list for 'contradictory_indices'.\n\n"
-            "Chunks:\n{chunks}\n\n"
-            "JSON Output:"
+            "You are a clinical data analyst specializing in identifying contradictions in medical information. "
+            "Review the numbered text chunks below and determine if any of them contradict each other.\n\n"
+            "**Chunks:**\n{chunks}\n\n"
+            "Your response must be a JSON object with three keys:\n"
+            "1. `contradictory_indices`: A list of the 1-based indices of the chunks that contradict each other. If no contradiction is found, this should be an empty list `[]`.\n"
+            "2. `confidence_score`: A float between 0.0 (no confidence) and 1.0 (absolute confidence) indicating your certainty about the contradiction.\n"
+            "3. `explanation`: A brief, clear explanation of why the chunks are contradictory.\n\n"
+            "**Example 1 (Contradiction):**\n"
+            "Chunks:\n"
+            "1. Patient's TSH level is 5.2 mIU/L, which is elevated.\n"
+            "2. The thyroid function test is within the normal range.\n"
+            "JSON Output:\n"
+            '{{\n'
+            '    "contradictory_indices": [1, 2],\n'
+            '    "confidence_score": 0.95,\n'
+            '    "explanation": "An elevated TSH level of 5.2 mIU/L is inconsistent with a normal thyroid function test."\n'
+            '}}\n\n'
+            "**Example 2 (No Contradiction):**\n"
+            "Chunks:\n"
+            "1. The patient's fasting glucose is 98 mg/dL.\n"
+            "2. The HbA1c level is 5.5%.\n"
+            "JSON Output:\n"
+            '{{\n'
+            '    "contradictory_indices": [],\n'
+            '    "confidence_score": 0.9,\n'
+            '    "explanation": "Both fasting glucose and HbA1c levels are within the normal, non-diabetic range."\n'
+            '}}\n\n'
+            "**Your Analysis:**"
         )
 
     def _regex_confidence_extraction(self, response: str) -> float:

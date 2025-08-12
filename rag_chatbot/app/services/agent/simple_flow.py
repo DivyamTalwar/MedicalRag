@@ -58,17 +58,22 @@ class SimpleRAGFlow:
             f"Subquery 2: {subquery2}\nResponse 2: {response2.subquery_response}\nSummary 2: {response2.summary}"
         )
         
-        synthesis_prompt = (
-            f"You are an expert medical information synthesizer. Your task is to generate a comprehensive, detailed, and highly accurate answer to the main user query based on the provided subquery responses and summaries. "
-            f"You must synthesize the information into a single, coherent response. Do not repeat information. "
-            f"Ensure that all numerical values, percentages, names, dates, and key facts are accurately represented. "
-            f"Use the percent sign (%) consistently and ensure there are no spaces between the number and the sign (e.g., '28%')."
-            f"Your response must be complete and not truncated. If the context is insufficient to provide a complete answer, clearly state what information is missing.\n\n"
-            f"Main User Query: {question}\n\n"
-            f"{synthesis_context}\n\n"
-            f"FINAL ANSWER:"
-            f"Overall, these metrics demonstrate CIVIE’s strong impact on improving financial and operational efficiency in radiology practices."
-        )
+        synthesis_prompt = f"""You are a master medical information synthesizer. Your task is to create a single, comprehensive answer to the user's main question by integrating the information from the two subquery responses. Do not repeat information. Accurately represent all numerical values and key facts.
+
+**Main User Query:**
+{question}
+
+---
+
+**Subquery Responses:**
+{synthesis_context}
+
+---
+
+**Example of a good final answer:**
+The patient's Rubella IgG antibody level is 25.0 IU/mL, and the IgM level is 0.2 AU/mL. An IgG level above 10.0 IU/mL indicates past infection or immunity, while an IgM level below 0.8 AU/mL is considered negative for a recent infection. Therefore, the results suggest the patient has immunity to Rubella and is not currently infected.
+
+**FINAL SYNTHESIZED ANSWER:**"""
         
         for attempt in range(max_retries):
             try:
