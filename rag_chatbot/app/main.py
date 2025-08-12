@@ -11,11 +11,11 @@ from pydantic import BaseModel
 from typing import List, Dict, Any
 from langchain_core.messages import HumanMessage, AIMessage, message_to_dict, messages_from_dict
 
-from rag_chatbot.app.services.agent.simple_flow import SimpleRAGFlow
+from rag_chatbot.app.services.query_engine.engine import QueryEngine
 
 app = FastAPI(title="Medical RAG Chatbot", version="5.0.0")
 
-agent = SimpleRAGFlow()
+query_engine = QueryEngine()
 
 chat_history_store: List[Dict[str, Any]] = []
 
@@ -31,7 +31,7 @@ async def chat_endpoint(request: ChatRequest):
     try:
         conversation_history = messages_from_dict(chat_history_store)
         
-        final_answer = await agent.run(request.question, chat_history=conversation_history)
+        final_answer = await query_engine.process_query(request.question, chat_history=conversation_history)
         
         updated_history = conversation_history + [
             HumanMessage(content=request.question),

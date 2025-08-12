@@ -1,11 +1,12 @@
+import asyncio
 import time
 import logging
 from typing import List, Dict, Any
 from llama_index.core.base.llms.types import ChatMessage
-from app.core.llm import CustomLLM
-from app.core.embeddings import get_embedding_model
-from .transformation import QueryCondenser, HyDEGenerator, MedicalQueryExpander
-from .search import DenseSearchEngine, SparseSearchEngine, ResultMerger, CrossEncoderReranker
+from rag_chatbot.app.core.llm import CustomLLM
+from rag_chatbot.app.core.embeddings import get_embedding_model
+from .transformation import SubQueryGenerator
+from .search import DenseSearchEngine, MedicalReranker
 from .context import ContextAssembler
 from .generation import AnswerGenerator
 
@@ -14,50 +15,43 @@ class QueryEngine:
         self.llm = CustomLLM()
         self.embeddings = get_embedding_model()
         
-        self.query_condenser = QueryCondenser(self.llm)
-        self.hyde_generator = HyDEGenerator(self.llm)
-        self.query_expander = MedicalQueryExpander()
-        
+        self.sub_query_generator = SubQueryGenerator(self.llm)
         self.dense_searcher = DenseSearchEngine()
-        self.sparse_searcher = SparseSearchEngine()
-        self.result_merger = ResultMerger()
-        self.reranker = CrossEncoderReranker()
-        
+        self.reranker = MedicalReranker()
         self.context_assembler = ContextAssembler()
-        
         self.answer_generator = AnswerGenerator(self.llm)
 
-    def process_query(self, query: str, chat_history: List[ChatMessage]) -> str:
+    async def process_sub_query(self, sub_query: str) -> List[Dict[str, Any]]:
+        logging.info(f"Processing sub-query: {sub_query}")
+        
+        dense_results = self.dense_searcher.search(sub_query, top_k=10)
+        
+        reranked_results = self.reranker.rerank(sub_query, dense_results, top_k=5)
+        
+        return [doc.metadata for doc in reranked_results]
+
+    async def process_query(self, query: str, chat_history: List[ChatMessage]) -> str:
         try:
             start_time = time.time()
             logging.info(f"Processing query: {query[:100]}...")
 
-            condensed_query = self.query_condenser.condense(query, chat_history)
-            logging.info(f"Condensed query: {condensed_query}")
+            sub_queries_generation = await self.sub_query_generator.generate(query, chat_history)
+            sub_queries = sub_queries_generation.queries
+            logging.info(f"Generated {len(sub_queries)} sub-queries.")
 
-            hyde_start = time.time()
-            hypothetical_doc = self.hyde_generator.generate(condensed_query)
-            logging.info(f"HyDE generation took {time.time() - hyde_start:.2f}s")
+            tasks = [self.process_sub_query(sq) for sq in sub_queries]
+            sub_query_results = await asyncio.gather(*tasks)
 
-            expanded_terms = self.query_expander.expand(condensed_query)
+            final_context = []
+            for i, result in enumerate(sub_query_results):
+                final_context.append({
+                    "sub_query": sub_queries[i],
+                    "results": result
+                })
+
+            context_str = self.context_assembler.assemble(final_context)
             
-            search_start = time.time()
-            dense_results = self.dense_searcher.search(hypothetical_doc)
-            sparse_results = self.sparse_searcher.search(expanded_terms)
-            logging.info(f"Dense/Sparse search took {time.time() - search_start:.2f}s")
-
-            merge_start = time.time()
-            merged_results = self.result_merger.merge(dense_results, sparse_results)
-            reranked_chunks = self.reranker.rerank(condensed_query, merged_results)
-            logging.info(f"Merge and rerank took {time.time() - merge_start:.2f}s")
-
-            context_start = time.time()
-            context_chunks = self.context_assembler.assemble(reranked_chunks)
-            logging.info(f"Context assembly took {time.time() - context_start:.2f}s")
-            
-            gen_start = time.time()
-            final_answer = self.answer_generator.generate(condensed_query, context_chunks)
-            logging.info(f"Answer generation took {time.time() - gen_start:.2f}s")
+            final_answer = self.answer_generator.generate(query, context_str)
 
             total_time = time.time() - start_time
             logging.info(f"Query processed in {total_time:.2f}s")

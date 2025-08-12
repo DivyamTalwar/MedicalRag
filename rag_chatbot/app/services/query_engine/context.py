@@ -297,77 +297,28 @@ class MedicalContextAssembler:
         
         return len(entities) >= min_entities and word_count >= min_words
 
-    def assemble(self, reranked_child_chunks: List[Document]) -> Tuple[List[Document], str]:
-        if not reranked_child_chunks:
-            return [], ""
-        
-        try:
-            parent_ids = []
-            for chunk in reranked_child_chunks:
-                parent_id = chunk.metadata.get('parent_id')
-                if parent_id and parent_id not in parent_ids:
-                    parent_ids.append(parent_id)
+    def assemble(self, sub_query_results: List[Dict[str, Any]]) -> str:
+        if not sub_query_results:
+            return ""
+
+        final_context_str = ""
+        for i, sq_result in enumerate(sub_query_results):
+            sub_query = sq_result.get("sub_query", f"Sub-query {i+1}")
+            results = sq_result.get("results", [])
             
-            if not parent_ids:
-                return [], ""
+            final_context_str += f"Sub-query {i+1}: {sub_query}\n"
+            final_context_str += "Results:\n"
             
-            logging.info(f"Fetching {len(parent_ids)} parent chunks from MongoDB")
+            if not results:
+                final_context_str += "- No results found.\n\n"
+                continue
+
+            for j, result in enumerate(results):
+                text = result.get('text', 'N/A')
+                score = result.get('rerank_score', 0.0)
+                final_context_str += f"{j+1}. (Score: {score:.2f}) {text}\n"
+            final_context_str += "\n"
             
-            parent_chunks_cursor = self.collection.find({"metadata.chunk_id": {"$in": parent_ids}})
-            
-            parent_chunks_map = {chunk['metadata']['chunk_id']: chunk for chunk in parent_chunks_cursor}
-            
-            final_context_chunks = []
-            for pid in parent_ids:
-                chunk_data = parent_chunks_map.get(pid)
-                if chunk_data:
-                    chunk = Document(
-                        id=chunk_data['metadata']['chunk_id'],
-                        text=chunk_data['text'],
-                        metadata=chunk_data['metadata']
-                    )
-                    matching_child = next((c for c in reranked_child_chunks if c.metadata.get('parent_id') == pid), None)
-                    if matching_child:
-                        chunk.metadata.update({
-                            'rerank_score': matching_child.metadata.get('rerank_score', 0),
-                            'query_type': matching_child.metadata.get('query_type', 'general')
-                        })
-                    final_context_chunks.append(chunk)
-            
-            if not final_context_chunks:
-                return [], ""
-            
-            logging.info(f"Retrieved {len(final_context_chunks)} parent chunks")
-            
-            deduplicated_chunks = self._semantic_deduplication(final_context_chunks)
-            logging.info(f"After deduplication: {len(deduplicated_chunks)} chunks")
-            
-            sorted_chunks = sorted(
-                deduplicated_chunks, 
-                key=lambda x: (x.metadata.get('page_no', 0), x.metadata.get('order_idx', 0))
-            )
-            
-            context_parts = []
-            for i, chunk in enumerate(sorted_chunks):
-                normalized_text = self._normalize_medical_terminology(chunk.text)
-                
-                highlighted_text = self._highlight_medical_entities(normalized_text)
-                
-                chunk_header = f"Chunk {i+1}"
-                context_parts.append(f"{chunk_header}: {highlighted_text}")
-                
-            assembled_context = "\n\n".join(context_parts)
-            
-            total_entities = len(self._extract_medical_entities(assembled_context))
-            logging.info(f"Final assembled context: {len(sorted_chunks)} chunks, {total_entities} medical entities")
-            
-            return sorted_chunks, assembled_context
-        except Exception as e:
-            logging.error(f"Context assembly failed: {e}")
-            return [], "Context assembly failed due to technical error."
-            
-        except Exception as e:
-            logging.error(f"Context assembly failed: {e}")
-            return [], "Context assembly failed due to technical error."
+        return final_context_str
 
 ContextAssembler = MedicalContextAssembler
