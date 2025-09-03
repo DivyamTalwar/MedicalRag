@@ -11,11 +11,11 @@ from pydantic import BaseModel
 from typing import List, Dict, Any
 from langchain_core.messages import HumanMessage, AIMessage, message_to_dict, messages_from_dict
 
-from rag_chatbot.app.services.query_engine.engine import QueryEngine
+from rag_chatbot.app.services.agent.builder import build_medical_rag_agent
 
 app = FastAPI(title="Medical RAG Chatbot", version="5.0.0")
 
-query_engine = QueryEngine()
+agent = build_medical_rag_agent()
 
 chat_history_store: List[Dict[str, Any]] = []
 
@@ -31,8 +31,17 @@ async def chat_endpoint(request: ChatRequest):
     try:
         conversation_history = messages_from_dict(chat_history_store)
         
-        final_answer = await query_engine.process_query(request.question, chat_history=conversation_history)
+        inputs = {
+            "query_state": {
+                "original_query": request.question,
+                "chat_history": conversation_history
+            }
+        }
         
+        result = await agent.run(inputs)
+        
+        final_answer = result.get("generation_state", {}).get("final_answer", "No answer generated.")
+
         updated_history = conversation_history + [
             HumanMessage(content=request.question),
             AIMessage(content=final_answer)
@@ -59,4 +68,4 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000)
