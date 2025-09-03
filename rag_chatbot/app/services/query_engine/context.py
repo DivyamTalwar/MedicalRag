@@ -297,28 +297,65 @@ class MedicalContextAssembler:
         
         return len(entities) >= min_entities and word_count >= min_words
 
-    def assemble(self, sub_query_results: List[Dict[str, Any]]) -> str:
-        if not sub_query_results:
-            return ""
+    def assemble(self, child_chunks: List[Document]) -> Tuple[List[Document], str]:
+        if not child_chunks:
+            return [], ""
 
-        final_context_str = ""
-        for i, sq_result in enumerate(sub_query_results):
-            sub_query = sq_result.get("sub_query", f"Sub-query {i+1}")
-            results = sq_result.get("results", [])
-            
-            final_context_str += f"Sub-query {i+1}: {sub_query}\n"
-            final_context_str += "Results:\n"
-            
-            if not results:
-                final_context_str += "- No results found.\n\n"
-                continue
+        # Get parent documents
+        parent_doc_ids = []
+        for child_doc in child_chunks:
+            try:
+                parent_id = child_doc.id.split('_')[0]
+                parent_doc_ids.append(parent_id)
+            except (AttributeError, IndexError):
+                logging.warning(f"Could not parse parent ID from child ID: {getattr(child_doc, 'id', 'N/A')}")
 
-            for j, result in enumerate(results):
+        unique_parent_ids = list(set(parent_doc_ids))
+        
+        parent_docs = []
+        if unique_parent_ids:
+            try:
+                results = self.collection.find({"id": {"$in": unique_parent_ids}})
+                doc_map = {doc['id']: Document(**doc) for doc in results}
+                parent_docs = [doc_map[pid] for pid in unique_parent_ids if pid in doc_map]
+            except Exception as e:
+                logging.error(f"Failed to retrieve parent documents from MongoDB: {e}")
+
+        context_str = "\n\n---\n\n".join([doc.text for doc in parent_docs])
+        
+        return parent_docs, context_str
+
+    def assemble_comprehensive_context(
+        self, 
+        original_query: str, 
+        original_query_results: List[Dict[str, Any]], 
+        sub_query_results: Dict[str, List[Dict[str, Any]]]
+    ) -> str:
+        context_str = "### Primary Context (from original query)\n"
+        context_str += f"Original Query: {original_query}\n"
+        if original_query_results:
+            for i, result in enumerate(original_query_results):
                 text = result.get('text', 'N/A')
                 score = result.get('rerank_score', 0.0)
-                final_context_str += f"{j+1}. (Score: {score:.2f}) {text}\n"
-            final_context_str += "\n"
+                context_str += f"{i+1}. (Score: {score:.2f}) {text}\n"
+        else:
+            context_str += "- No results found for the original query.\n"
+        
+        context_str += "\n### Supplementary Context (from sub-queries)\n"
+        if sub_query_results:
+            for sub_query, results in sub_query_results.items():
+                context_str += f"Sub-query: {sub_query}\n"
+                if results:
+                    for i, result in enumerate(results):
+                        text = result.get('text', 'N/A')
+                        score = result.get('rerank_score', 0.0)
+                        context_str += f"- (Score: {score:.2f}) {text}\n"
+                else:
+                    context_str += "- No results found for this sub-query.\n"
+                context_str += "\n"
+        else:
+            context_str += "- No sub-queries were generated or they produced no results.\n"
             
-        return final_context_str
+        return context_str
 
 ContextAssembler = MedicalContextAssembler

@@ -36,22 +36,23 @@ class QueryEngine:
             logging.info(f"Processing query: {query[:100]}...")
 
             sub_queries_generation = await self.sub_query_generator.generate(query, chat_history)
-            sub_queries = sub_queries_generation.queries
-            logging.info(f"Generated {len(sub_queries)} sub-queries.")
-
-            tasks = [self.process_sub_query(sq) for sq in sub_queries]
-            sub_query_results = await asyncio.gather(*tasks)
-
-            final_context = []
-            for i, result in enumerate(sub_query_results):
-                final_context.append({
-                    "sub_query": sub_queries[i],
-                    "results": result
-                })
-
-            context_str = self.context_assembler.assemble(final_context)
             
-            final_answer = self.answer_generator.generate(query, context_str)
+            all_queries = [query] + [sq for sq in sub_queries_generation.queries if sq.lower() != query.lower()]
+            logging.info(f"Generated {len(all_queries) - 1} sub-queries. Total queries: {len(all_queries)}")
+
+            tasks = [self.process_sub_query(q) for q in all_queries]
+            all_results = await asyncio.gather(*tasks)
+
+            original_query_results = all_results[0]
+            sub_query_results = all_results[1:]
+
+            context_str = self.context_assembler.assemble_comprehensive_context(
+                query, 
+                original_query_results, 
+                dict(zip(all_queries[1:], sub_query_results))
+            )
+            
+            final_answer = self.answer_generator.generate_refined_answer(query, context_str, chat_history)
 
             total_time = time.time() - start_time
             logging.info(f"Query processed in {total_time:.2f}s")

@@ -3,8 +3,8 @@ import re
 import json
 import logging
 from typing import List, Dict, Any, Optional
-from langchain_core.messages import BaseMessage
-from rag_chatbot.app.core.llm import CustomLLM
+from llama_index.core.base.llms.types import ChatMessage
+from rag_chatbot.app.core.llm import CustomLLM, XMLExtractionSystem
 from rag_chatbot.app.core.extractor import MedicalEntityExtractor
 from dataclasses import dataclass
 from difflib import SequenceMatcher
@@ -56,13 +56,13 @@ class QueryCondenser:
         
         return condensed
 
-    def condense(self, question: str, chat_history: List[BaseMessage]) -> str:
+    def condense(self, question: str, chat_history: List[ChatMessage]) -> str:
         if not chat_history:
             return question
 
         try:
             history_str = "\n".join(
-                [f"{msg.type.capitalize()}: {msg.content}" for msg in chat_history]
+                [f"{msg.role.capitalize()}: {msg.content}" for msg in chat_history]
             )
             
             prompt = self._template.format(chat_history=history_str, question=question)
@@ -82,6 +82,55 @@ class SubQueryGenerator:
     def __init__(self, llm: CustomLLM):
         self.llm = llm
         self.query_condenser = QueryCondenser(llm)
+        self.xml_extractor = XMLExtractionSystem(llm)
+
+    def _create_xml_subquery_prompt(self, question: str) -> str:
+        return f"""
+**MEDICAL SUBQUERY DECOMPOSITION TASK**
+
+You are a medical expert specializing in breaking down complex clinical questions into focused, actionable subqueries.
+
+**Primary Question to Analyze:**
+"{question}"
+
+**Decomposition Requirements:**
+1. **Comprehensive Coverage:** Ensure all aspects of the main question are addressed
+2. **Medical Precision:** Preserve exact medical terminology, values, and units
+3. **Non-Overlapping:** Each subquery must address a distinct aspect
+4. **Clinical Relevance:** Focus on clinically significant elements
+5. **Optimal Count:** Generate 2-5 subqueries (quality over quantity)
+
+**Medical Analysis Guidelines:**
+- Identify specific medical conditions, symptoms, or findings mentioned
+- Preserve laboratory values, measurements, and units exactly
+- Consider diagnostic, therapeutic, and prognostic aspects
+- Include relevant clinical context and relationships
+- Address both direct questions and implied clinical concerns
+
+**Examples of Quality Decomposition:**
+
+**Example 1 - Lab Results Analysis:**
+Main Question: "Analyze the patient's arterial blood gas (ABG) results: pH 7.35, PCO2 45 mmHg, PO2 95 mmHg, and HCO3 24 mEq/L. What is the acid-base status, and how does it relate to the patient's respiratory and metabolic condition?"
+
+Quality Subqueries:
+1. "What is the patient's acid-base status based on a pH of 7.35?"
+2. "How does a PCO2 of 45 mmHg indicate the patient's respiratory status?"
+3. "What does an HCO3 of 24 mEq/L reveal about the patient's metabolic condition?"
+4. "Is there evidence of compensation in these ABG results?"
+5. "What is the patient's oxygenation status given a PO2 of 95 mmHg?"
+
+**Example 2 - Symptom Analysis:**
+Main Question: "Patient presents with chest pain, shortness of breath, and elevated troponin levels. What could be the diagnosis?"
+
+Quality Subqueries:
+1. "What are the potential causes of chest pain in this clinical context?"
+2. "How do shortness of breath symptoms relate to possible cardiac conditions?"
+3. "What do elevated troponin levels indicate about cardiac muscle damage?"
+4. "What diagnostic workup would be appropriate for this presentation?"
+
+**Your Task:**
+Generate your subquery breakdown using the XML format below. Focus on creating the most clinically relevant and comprehensive set of subqueries.
+"""
 
     def _create_subquery_prompt(self, question: str) -> str:
         return f"""
@@ -143,69 +192,92 @@ Response:
             logging.error(f"Content extraction error: {e}")
             return ""
 
-    def _extract_queries_with_regex(self, text: str) -> dict:
-        queries_match = re.search(r'\[\s*("([^"]+)"\s*,\s*)*"([^"]+)"\s*\]', text, re.DOTALL)
-        if queries_match:
-            queries = re.findall(r'"([^"]+)"', queries_match.group(0))
-            if queries:
-                return {"queries": queries}
+    def _parse_json_from_response(self, text: str) -> Optional[Dict[str, Any]]:
+        json_match = re.search(r'```json\s*(\{.*?\})\s*```', text, re.DOTALL)
+        if json_match:
+            try:
+                return json.loads(json_match.group(1))
+            except json.JSONDecodeError:
+                logging.warning("Failed to parse JSON from markdown block.")
 
-        # Fallback for numbered lists
-        queries = re.findall(r'^\s*\d+[.)]\s*(.*)', text, re.MULTILINE)
-        if len(queries) >= 2:
-            return {"queries": [q.strip() for q in queries]}
+        json_match = re.search(r'\{.*\}', text, re.DOTALL)
+        if json_match:
+            try:
+                return json.loads(json_match.group(0))
+            except json.JSONDecodeError:
+                logging.warning("Failed to parse raw JSON object from response.")
 
-        return {
-            "queries": [
-                f"What are the main components of {text[:50]}?",
-                f"How does the process work for {text[:50]}?"
-            ]
-        }
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError:
+            logging.warning("Failed to parse the entire response string as JSON.")
+            return None
 
-    async def generate(self, question: str, chat_history: List = []) -> SubQueryGeneration:
+    async def generate(self, question: str, chat_history: List = [], use_xml: bool = True) -> SubQueryGeneration:
+        original_question = question
+
         if chat_history:
-            question = self.query_condenser.condense(question, chat_history)
+            condensed_question = self.query_condenser.condense(question, chat_history)
+        else:
+            condensed_question = question
 
-        content = ""
-        try:
-            prompt = self._create_subquery_prompt(question)
-            response = self.llm.invoke(prompt)
-            content = self._extract_llm_content(response)
-            
-            if content:
-                try:
-                    json_str = re.search(r'```json\s*(\{.*?\})\s*```', content, re.DOTALL)
-                    if json_str:
-                        content = json_str.group(1)
-                    
-                    json_data = json.loads(content)
-                    return SubQueryGeneration.model_validate(json_data)
-                except json.JSONDecodeError:
-                    json_match = re.search(r'\{.*\}', content, re.DOTALL)
-                    if json_match:
-                        json_data = json.loads(json_match.group())
-                        return SubQueryGeneration.model_validate(json_data)
-                        
-        except Exception as e:
-            logging.error(f"Subquery generation attempt 1 failed: {e}")
+        if not condensed_question or not condensed_question.strip():
+            final_query = original_question
+        else:
+            final_query = condensed_question
+
+        # Try XML-based extraction first
+        if use_xml:
+            try:
+                xml_prompt = self._create_xml_subquery_prompt(final_query)
+                
+                result = await self.xml_extractor.get_structured_xml_response(
+                    prompt=xml_prompt,
+                    model_class=SubQueryGeneration,
+                    context="You are a medical subquery generation specialist. Create precise, non-overlapping medical subqueries that comprehensively address the main question."
+                )
+                
+                # Validate that we have actual queries
+                if result.queries and len(result.queries) > 0:
+                    validated_queries = [q for q in result.queries if isinstance(q, str) and q.strip()]
+                    if validated_queries:
+                        result.queries = validated_queries
+                        logging.info(f"Successfully generated {len(validated_queries)} subqueries using XML")
+                        return result
+                
+            except Exception as e:
+                logging.error(f"XML subquery generation failed: {e}, falling back to JSON")
+                use_xml = False
+
+        # Fallback to JSON-based approach
+        if not use_xml:
+            try:
+                prompt = self._create_subquery_prompt(final_query)
+                response = self.llm.invoke(prompt)
+                content = self._extract_llm_content(response)
+                
+                if content:
+                    json_data = self._parse_json_from_response(content)
+                    if json_data and json_data.get("queries"):
+                        validated_queries = [q for q in json_data.get("queries", []) if isinstance(q, str) and q.strip()]
+                        if validated_queries:
+                            json_data["queries"] = validated_queries
+                            return SubQueryGeneration.model_validate(json_data)
+                    logging.warning("LLM response did not contain valid and non-empty JSON for subqueries.")
+                            
+            except Exception as e:
+                logging.error(f"Subquery generation with LLM failed: {e}")
         
-        try:
-            queries_dict = self._extract_queries_with_regex(content or question)
-            return SubQueryGeneration.model_validate(queries_dict)
-        except Exception as e:
-            logging.error(f"Subquery generation attempt 2 (regex) failed: {e}")
-        
-        return SubQueryGeneration(
-            queries=[
-                f"What are the main aspects of: {question}",
-                f"How does the following work: {question}"
-            ]
-        )
+        # Final fallback: return the original query as a single subquery
+        logging.warning("All subquery generation methods failed, using original query")
+        return SubQueryGeneration(queries=[final_query])
 
 class ContradictionDetector:
     def __init__(self, llm: CustomLLM):
         self.llm = llm
+        self.xml_extractor = XMLExtractionSystem(llm)
         self._template = self._create_template()
+        self._xml_template = self._create_xml_template()
 
     def _create_template(self):
         return (
@@ -238,6 +310,48 @@ class ContradictionDetector:
             '}}\n\n'
             "**Your Analysis:**"
         )
+
+    def _create_xml_template(self):
+        return """
+**MEDICAL CONTRADICTION ANALYSIS TASK**
+
+You are a clinical data analyst specializing in identifying contradictions and inconsistencies in medical information.
+
+**Medical Information Chunks to Analyze:**
+{chunks}
+
+**Analysis Instructions:**
+1. **Systematic Review:** Examine each chunk for medical facts, values, and statements
+2. **Contradiction Identification:** Look for conflicting information between chunks
+3. **Clinical Context:** Consider medical knowledge and normal/abnormal ranges
+4. **Confidence Assessment:** Evaluate certainty level of detected contradictions
+
+**Types of Medical Contradictions to Detect:**
+- Conflicting laboratory values or reference ranges
+- Inconsistent diagnostic conclusions
+- Contradictory treatment recommendations
+- Opposing clinical assessments
+- Incompatible timeline information
+- Conflicting patient status descriptions
+
+**Examples of Medical Contradictions:**
+
+**Example 1 - Clear Contradiction:**
+Chunk 1: "Patient's TSH level is 5.2 mIU/L, which is elevated indicating hypothyroidism."
+Chunk 2: "Thyroid function tests are completely normal with no abnormalities detected."
+→ **Contradiction:** Elevated TSH contradicts normal thyroid function assessment
+
+**Example 2 - No Contradiction:**
+Chunk 1: "Patient's fasting glucose is 98 mg/dL, within normal range."
+Chunk 2: "HbA1c level is 5.5%, indicating good long-term glucose control."
+→ **No Contradiction:** Both values support normal glucose metabolism
+
+**Your Analysis Requirements:**
+- Identify specific contradictory information with medical reasoning
+- Provide confidence level based on clinical significance
+- List the chunk indices that contain contradictory information
+- Explain the medical basis for contradiction detection
+"""
 
     def _regex_confidence_extraction(self, response: str) -> float:
         confidence_patterns = [
@@ -292,43 +406,93 @@ class ContradictionDetector:
         
         return list(set(indices)) 
 
-    def detect(self, chunks: List[str]) -> Dict[str, Any]:
+    async def detect(self, chunks: List[str], use_xml: bool = True) -> Dict[str, Any]:
         if len(chunks) < 2:
-            return {"contradictory_indices": [], "confidence_score": 0.0}
+            return {"contradictory_indices": [], "confidence_score": 0.0, "explanation": "Insufficient chunks for contradiction analysis"}
         
-        prompt = self._template.format(
-            chunks="\n".join([f"{i+1}. {chunk}" for i, chunk in enumerate(chunks)])
-        )
+        numbered_chunks = "\n".join([f"{i+1}. {chunk}" for i, chunk in enumerate(chunks)])
         
-        try:
-            response = self.llm.invoke(prompt).content
+        if use_xml:
+            try:
+                # Define a simple Pydantic model for contradiction results
+                from pydantic import BaseModel
+                from typing import List as TypingList
+                
+                class ContradictionResult(BaseModel):
+                    contradictory_indices: TypingList[int]
+                    confidence_score: float
+                    explanation: str
+                
+                xml_prompt = self._xml_template.format(chunks=numbered_chunks)
+                
+                result = await self.xml_extractor.get_structured_xml_response(
+                    prompt=xml_prompt,
+                    model_class=ContradictionResult,
+                    context="You are a medical contradiction detection specialist. Analyze medical information for conflicting statements or values."
+                )
+                
+                # Validate indices are within range and adjust for 0-based indexing
+                valid_indices = []
+                for idx in result.contradictory_indices:
+                    # Convert from 1-based to 0-based indexing
+                    zero_based_idx = idx - 1 if idx > 0 else idx
+                    if 0 <= zero_based_idx < len(chunks):
+                        valid_indices.append(zero_based_idx)
+                
+                return {
+                    "contradictory_indices": valid_indices,
+                    "confidence_score": max(0.0, min(1.0, result.confidence_score)),
+                    "explanation": result.explanation
+                }
+                
+            except Exception as e:
+                logging.error(f"XML contradiction detection failed: {e}, falling back to JSON")
+                use_xml = False
+        
+        # Fallback to JSON approach
+        if not use_xml:
+            prompt = self._template.format(chunks=numbered_chunks)
             
-            json_match = re.search(r'\{.*\}', response, re.DOTALL)
-            if json_match:
-                result = json.loads(json_match.group())
-            else:
-                result = json.loads(response)
-            
-            contradictory_indices = result.get("contradictory_indices", [])
-            valid_indices = [i for i in contradictory_indices if 0 <= i < len(chunks)]
-            
-            return {
-                "contradictory_indices": valid_indices,
-                "confidence_score": max(0.0, min(1.0, result.get("confidence_score", 0.0))),
-                "explanation": result.get("explanation", "")
-            }
-            
-        except (json.JSONDecodeError, TypeError, AttributeError) as e:
-            logging.warning(f"JSON parsing failed, using regex extraction: {e}")
-            
-            confidence_score = self._regex_confidence_extraction(response)
-            contradictory_indices = self._regex_indices_extraction(response, len(chunks))
-            
-            return {
-                "contradictory_indices": contradictory_indices,
-                "confidence_score": confidence_score,
-                "explanation": "Extracted using regex fallback"
-            }
+            try:
+                response = self.llm.invoke(prompt)
+                response_content = response.content if hasattr(response, 'content') else str(response)
+                
+                json_match = re.search(r'\{.*\}', response_content, re.DOTALL)
+                if json_match:
+                    result = json.loads(json_match.group())
+                else:
+                    result = json.loads(response_content)
+                
+                # Convert 1-based indices to 0-based and validate
+                contradictory_indices = result.get("contradictory_indices", [])
+                valid_indices = []
+                for idx in contradictory_indices:
+                    zero_based_idx = idx - 1 if idx > 0 else idx
+                    if 0 <= zero_based_idx < len(chunks):
+                        valid_indices.append(zero_based_idx)
+                
+                return {
+                    "contradictory_indices": valid_indices,
+                    "confidence_score": max(0.0, min(1.0, result.get("confidence_score", 0.0))),
+                    "explanation": result.get("explanation", "")
+                }
+                
+            except (json.JSONDecodeError, TypeError, AttributeError) as e:
+                logging.warning(f"JSON parsing failed, using regex extraction: {e}")
+                
+                confidence_score = self._regex_confidence_extraction(response_content)
+                contradictory_indices = self._regex_indices_extraction(response_content, len(chunks))
+                
+                return {
+                    "contradictory_indices": contradictory_indices,
+                    "confidence_score": confidence_score,
+                    "explanation": "Extracted using regex fallback"
+                }
+    
+    def detect_sync(self, chunks: List[str]) -> Dict[str, Any]:
+        """Synchronous wrapper for backward compatibility."""
+        import asyncio
+        return asyncio.run(self.detect(chunks, use_xml=True))
 
 class MedicalQueryExpander:
     def __init__(self):
