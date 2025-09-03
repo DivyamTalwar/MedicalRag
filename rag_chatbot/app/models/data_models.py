@@ -34,10 +34,12 @@ class Document(BaseModel):
     text: str = Field(..., description="The text content of the document.")
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Metadata associated with the document.")
 
-class Citation(BaseModel):
-    document_id: str = Field(..., description="The ID of the document being cited.")
-    source_name: str = Field(..., description="The name of the source document.")
-    page_number: Optional[int] = Field(None, description="The page number of the citation.")
-    section_title: Optional[str] = Field(None, description="The section title of the citation.")
-    content: str = Field(..., description="The cited content.")
-    confidence_score: float = Field(1.0, description="Confidence score for the citation.")
+class ParentSummary(BaseModel):
+    id: str = Field(..., description="Unique identifier for the parent summary.")
+    summary: str = Field(..., description="The summary of the parent document.")
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Metadata associated with the summary.")
+
+class ParentDoc(BaseModel):
+    id: str = Field(..., description="Unique identifier for the parent document.")
+    text: str = Field(..., description="The text content of the parent document.")
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Metadata associated with the document.")
