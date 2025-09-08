@@ -1,0 +1,23 @@
+# Medical RAG System - Ultra Simple Edition
+# Core API Framework
+fastapi==0.104.1
+uvicorn==0.24.0
+python-multipart==0.0.6
+
+# Data Models
+pydantic==2.4.2
+
+# Environment
+python-dotenv==1.0.0
+
+# HTTP Requests
+requests==2.31.0
+
+# Vector Database
+pinecone-client==2.2.4
+
+# PDF Processing  
+pdfplumber==0.10.3
+
+# Scientific Computing
+numpy==1.24.4
