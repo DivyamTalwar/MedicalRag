@@ -9,23 +9,6 @@
 
 ---
 
-## 📊 SYSTEM METRICS THAT PROVE GREATNESS
-
-| Metric | Value | Description |
-|--------|-------|-------------|
-| **Documents Indexed** | 211+ | Medical PDFs processed and searchable |
-| **Query Response Time** | <2s | End-to-end query processing |
-| **Extraction Accuracy** | 99%+ | Multi-engine validation |
-| **Retrieval Precision@5** | 0.92 | Top-5 result relevance |
-| **System Uptime** | 99.9% | Production availability |
-| **Concurrent Queries** | 100+ | Parallel processing capacity |
-| **Daily Throughput** | 10K+ | Queries handled per day |
-| **Model Count** | 11 | Transformer models integrated |
-| **Embedding Dimensions** | 1024 | Dense vector size |
-| **Knowledge Graph Relationships** | 45+ | Medical entity connections |
-
----
-
 ## 🏗️ COMPLETE SYSTEM ARCHITECTURE
 
 ```mermaid
