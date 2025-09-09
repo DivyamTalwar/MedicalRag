@@ -1,4 +1,4 @@
-# 🚀 LEGENDARY MEDICAL RAG SYSTEM: THE MOST ADVANCED IMPLEMENTATION EVER BUILT
+# 🚀MEDICAL RAG SYSTEM: THE MOST ADVANCED IMPLEMENTATION EVER BUILT
 ## Complete Production-Ready Medical Information Retrieval Platform with State-of-the-Art NLP
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org)
